@@ -1,0 +1,56 @@
+{
+	"name": "@redwoodjs/starter-minimal",
+	"version": "1.0.0",
+	"description": "A bare-bones RedwoodSDK starter",
+	"main": "index.js",
+	"type": "module",
+	"keywords": [],
+	"author": "Joel Gustafson",
+	"license": "GPL-3.0-only",
+	"private": true,
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite dev",
+		"dev:init": "rw-scripts dev-init",
+		"preview": "vite preview",
+		"worker:run": "rw-scripts worker-run",
+		"clean": "npm run clean:vite",
+		"clean:vite": "rm -rf ./node_modules/.vite",
+		"release": "rw-scripts ensure-deploy-env && npm run clean && npm run build && RWSDK_DEPLOY=1 wrangler deploy",
+		"generate": "rw-scripts ensure-env && wrangler types",
+		"check": "npm run generate && npm run types",
+		"types": "tsc"
+	},
+	"dependencies": {
+		"@tailwindcss/vite": "^4.1.12",
+		"@types/hast": "^3.0.4",
+		"@types/is-hotkey": "^0.1.10",
+		"@types/mdast": "^4.0.4",
+		"is-hotkey": "^0.2.0",
+		"mdast-util-to-hast": "^13.2.0",
+		"rwsdk": "0.1.35",
+		"slate": "^0.118.0",
+		"slate-history": "^0.113.1",
+		"slate-react": "^0.117.4",
+		"tailwindcss": "^4.1.12",
+		"use-debounce": "^10.0.5"
+	},
+	"devDependencies": {
+		"@cloudflare/vite-plugin": "1.7.4",
+		"@cloudflare/workers-types": "^4.20250407.0",
+		"@types/node": "^22.14.0",
+		"@types/react": "^19.1.2",
+		"@types/react-dom": "^19.1.2",
+		"prettier": "^3.6.2",
+		"typescript": "^5.8.3",
+		"vite": "^6.2.6",
+		"wrangler": "^4.20.5"
+	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild",
+			"sharp",
+			"workerd"
+		]
+	}
+}

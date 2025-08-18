@@ -1,0 +1,33 @@
+{
+	"name": "snowpost",
+	"main": "src/worker.tsx",
+
+	"compatibility_date": "2025-05-07",
+	"compatibility_flags": ["nodejs_compat"],
+
+	"assets": {
+		"binding": "ASSETS"
+	},
+
+	"observability": {
+		"enabled": true
+	},
+
+	"r2_buckets": [
+		{
+			"bucket_name": "snowpost",
+			"binding": "R2"
+		}
+	],
+
+	"kv_namespaces": [
+		{
+			"binding": "DID_TO_HANDLE",
+			"id": "f11b5fd9874b4d2489d969f201e89b86"
+		},
+		{
+			"binding": "HANDLE_TO_DID",
+			"id": "feea158f8d12422cb42f5dd9f3cdafc3"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"useTabs": true,
+	"semi": true,
+	"printWidth": 80,
+	"trailingComma": "all",
+	"overrides": [
+		{
+			"files": "*.md",
+			"options": {
+				"printWidth": 80,
+				"useTabs": false,
+				"tabWidth": 2
+			}
+		},
+		{
+			"files": "*.jsonc",
+			"options": {
+				"trailingComma": "none"
+			}
+		}
+	]
+}

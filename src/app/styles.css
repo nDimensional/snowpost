@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*@font-face {
+	font-family: "Wremena";
+	src:
+		url("/wremena/Wremena Regular.woff") format("woff"),
+		url("/wremena/Wremena Regular.otf") format("opentype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Wremena";
+	src:
+		url("/wremena/Wremena Bold.woff") format("woff"),
+		url("/wremena/Wremena Bold.otf") format("opentype");
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Wremena";
+	src:
+		url("/wremena/Wremena Light.woff") format("woff"),
+		url("/wremena/Wremena Light.otf") format("opentype");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}*/
+
+html {
+	/*font-family: "Wremena", Garamond, Georgia, serif;*/
+	font-family: "PT Serif", Garamond, Georgia, serif;
+	background-color: whitesmoke;
+}
+
+a {
+	text-decoration: underline;
+}
+
+.editor {
+	padding: 0 12px;
+	outline: none;
+
+	:focus {
+		outline: none;
+	}
+}
+
+.editor,
+.content {
+	h1 {
+		font-size: 48px;
+		margin-top: 12px;
+		margin-bottom: 18px;
+		border-bottom: 3px solid var(--color-stone-200);
+	}
+
+	h2 {
+		font-size: 32px;
+		margin-top: 12px;
+		margin-bottom: 16px;
+		border-bottom: 1px solid var(--color-stone-200);
+	}
+
+	h3 {
+		font-size: 24px;
+	}
+
+	p {
+		font-size: 16px;
+		margin: 12px 0;
+	}
+
+	blockquote {
+		margin: 0.5em 0;
+		padding: 0.75em;
+		border-left: 4px solid var(--color-stone-400);
+		background-color: var(--color-stone-200);
+		font-size: 18px;
+	}
+}
+
+/*html,
+body,
+#root {
+	width: 100%;
+}*/
