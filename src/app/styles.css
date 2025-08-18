@@ -1,39 +1,8 @@
 @import "tailwindcss";
 
-/*@font-face {
-	font-family: "Wremena";
-	src:
-		url("/wremena/Wremena Regular.woff") format("woff"),
-		url("/wremena/Wremena Regular.otf") format("opentype");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Wremena";
-	src:
-		url("/wremena/Wremena Bold.woff") format("woff"),
-		url("/wremena/Wremena Bold.otf") format("opentype");
-	font-weight: bold;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Wremena";
-	src:
-		url("/wremena/Wremena Light.woff") format("woff"),
-		url("/wremena/Wremena Light.otf") format("opentype");
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
-}*/
-
 html {
-	/*font-family: "Wremena", Garamond, Georgia, serif;*/
-	font-family: "PT Serif", Garamond, Georgia, serif;
-	background-color: whitesmoke;
+	font-family: "PT Serif", Garamond, serif;
+	background-color: var(--color-stone-100);
 }
 
 a {
