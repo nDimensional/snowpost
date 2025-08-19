@@ -89,7 +89,7 @@ export const Editor: React.FC<EditorProps> = (props) => {
 					<MarkButton format="bold" icon="/icons/format_bold.svg" />
 					<MarkButton format="italic" icon="/icons/format_italic.svg" />
 				</div>
-				<div className="bg-white border border-stone-200 focus-within:border-stone-300 flex-1 max-w-2xl">
+				<div className="bg-white border border-stone-200 focus-within:border-stone-300 flex-1">
 					<Editable
 						className="editor"
 						renderElement={renderElement}

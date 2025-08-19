@@ -1,20 +1,29 @@
-import { defineApp } from "rwsdk/worker";
+import { defineApp, ErrorResponse } from "rwsdk/worker";
 import { render, route } from "rwsdk/router";
+
+import { env } from "cloudflare:workers";
 
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { About } from "@/app/pages/About";
 import { Login } from "@/app/pages/Login";
-import { NewPost } from "@/app/pages/NewPost";
+import { Write } from "@/app/pages/Write";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { client } from "@/app/auth";
 import { sessionStore } from "@/app/auth/session";
 import { handlePattern } from "@/app/shared/utils";
+import {
+	createSessionCookie,
+	generateSessionId,
+	isValidSessionId,
+} from "rwsdk/auth";
 
 export type AppContext = {
 	session: { did: string } | null;
 };
+
+const cookieName = "session_id";
 
 export default defineApp([
 	setCommonHeaders(),
@@ -42,13 +51,25 @@ export default defineApp([
 
 			// const tokenInfo = await session.getTokenInfo(false);
 
-			const responseHeaders = new Headers(response.headers);
-			sessionStore.save(responseHeaders, { did: session.did });
-			responseHeaders.set("Location", "/");
+			const sessionId = await generateSessionId({
+				secretKey: env.AUTH_SECRET_KEY,
+			});
+
+			await env.WEB_SESSION_STORE.put(
+				sessionId,
+				JSON.stringify({ did: session.did }),
+			);
+
 			return new Response(null, {
-				...response,
 				status: 302,
-				headers: responseHeaders,
+				headers: {
+					Location: "/",
+					"Set-Cookie": createSessionCookie({
+						name: cookieName,
+						sessionId,
+						maxAge: undefined,
+					}),
+				},
 			});
 		} catch (err) {
 			console.error(err);
@@ -61,9 +82,9 @@ export default defineApp([
 		const params = new URLSearchParams(url.search);
 		const handle = params.get("handle");
 		if (handle === null) {
-			return new Response("missing 'handle' query parameter", { status: 400 });
+			throw new ErrorResponse(400, "missing 'handle' query parameter");
 		} else if (!handlePattern.test(handle)) {
-			return new Response("invalid handle", { status: 400 });
+			throw new ErrorResponse(400, "invalid handle");
 		}
 
 		try {
@@ -85,15 +106,52 @@ export default defineApp([
 		}
 	}),
 
-	async ({ ctx, request, headers }) => {
-		ctx.session = await sessionStore.load(request);
+	async ({ ctx, request }) => {
+		const sessionId = getSessionIdFromCookie(request);
+		if (!sessionId) {
+			return;
+		}
+
+		const isValid = await isValidSessionId({
+			sessionId,
+			secretKey: env.AUTH_SECRET_KEY,
+		});
+
+		if (!isValid) {
+			throw new ErrorResponse(401, "Invalid session id");
+		}
+
+		const value = await env.WEB_SESSION_STORE.get(sessionId);
+		if (value === null) {
+			return;
+		}
+
+		ctx.session = JSON.parse(value);
 	},
 
 	render(Document, [
 		route("/", Home),
 		route("/about", About),
 		route("/login", Login),
-		route("/new", NewPost),
+		route("/write", Write),
 		route("/:user/:slug", ViewPost),
 	]),
 ]);
+
+const getSessionIdFromCookie = (request: Request): string | undefined => {
+	const cookieHeader = request.headers.get("Cookie");
+	if (!cookieHeader) return undefined;
+
+	for (const cookie of cookieHeader.split(";")) {
+		const trimmedCookie = cookie.trim();
+		const separatorIndex = trimmedCookie.indexOf("=");
+		if (separatorIndex === -1) continue;
+
+		const key = trimmedCookie.slice(0, separatorIndex);
+		const value = trimmedCookie.slice(separatorIndex + 1);
+
+		if (key === cookieName) {
+			return value;
+		}
+	}
+};
