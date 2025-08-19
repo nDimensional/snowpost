@@ -6,14 +6,15 @@ html {
 }
 
 body {
-	height: 100vh;
+	min-height: 100svh;
+	-webkit-text-size-adjust: 100%;
 }
 
 #root {
 	padding-top: 32px;
 	padding-bottom: 32px;
 	max-width: var(--container-3xl);
-	height: 100vh;
+	min-height: 100svh;
 }
 
 #root > main {
@@ -28,7 +29,7 @@ body {
 	}
 
 	#root > main {
-		padding: 4px;
+		padding: 8px;
 	}
 }
 

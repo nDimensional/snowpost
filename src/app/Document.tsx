@@ -24,7 +24,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 					}
 				/>
 				<main className="flex-1">{children}</main>
-				<footer className="min-h-8 border-t-4 border-stone-300 mx-6"></footer>
+				{/*<footer className="min-h-8 border-t-4 border-stone-300 mx-6"></footer>*/}
 			</div>
 		</body>
 	</html>
