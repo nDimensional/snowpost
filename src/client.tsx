@@ -1,4 +1,3 @@
-import { initClient, initClientNavigation } from "rwsdk/client";
+import { initClient } from "rwsdk/client";
 
 initClient();
-initClientNavigation();

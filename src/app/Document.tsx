@@ -8,13 +8,14 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 		<head>
 			<meta charSet="utf-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+			<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 			<title>Snowpost</title>
-
 			<link rel="stylesheet" href={styles} />
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>
-			<div id="root" className="py-8 max-w-3xl mx-auto flex flex-col">
+			<div id="root" className="py-8 mx-auto flex flex-col">
 				{/*<Header title={<span className="text-2xl">❅</span>} />*/}
 				<Header
 					title={

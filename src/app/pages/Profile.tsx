@@ -8,7 +8,9 @@ async function getPostList(identity: {
 	did: string;
 	handle: string | null;
 }): Promise<{ slug: string }[]> {
-	const result = await env.DB.prepare("SELECT slug FROM posts WHERE did = ?")
+	const result = await env.DB.prepare(
+		"SELECT slug FROM posts WHERE did = ? ORDER BY slug DESC",
+	)
 		.bind(identity.did)
 		.all<{ slug: string }>();
 	return result.results;
@@ -34,11 +36,8 @@ export async function Profile({
 	return (
 		<div>
 			<div className="flex flex-row gap-2 py-2">
-				<ul>
-					<li>
-						<a href="/">/</a>
-					</li>
-					<li>
+				<ul className="flex flex-col ">
+					<li className="inline-flex gap-1">
 						<a href={`/${handle}`}>{handle}</a>
 					</li>
 					{postList.map(({ slug }) => {

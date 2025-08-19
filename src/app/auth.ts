@@ -8,12 +8,6 @@ import {
 	NodeSavedSession,
 } from "atproto-oauth-client-cloudflare-workers";
 
-// import {
-// 	NodeOAuthClient,
-// 	NodeSavedState,
-// 	NodeSavedSession,
-// } from "@/app/auth/oauth-client";
-
 const host = "https://snowpost.ndim.workers.dev";
 
 const parseKey = (value: string) =>

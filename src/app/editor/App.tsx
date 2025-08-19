@@ -93,6 +93,8 @@ export const App: React.FC<AppProps> = ({ session }) => {
 				)}
 			</section>
 
+			<hr />
+
 			<section className="flex justify-end">
 				{session === null ? (
 					<span>

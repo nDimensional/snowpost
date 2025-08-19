@@ -38,11 +38,11 @@ export async function ViewPost({
 			<div>
 				<div className="flex flex-row gap-2 py-2">
 					<a href={`/${handle}`}>{handle}</a>
-					<span className="text-stone-500">|</span>
+					<span className="text-stone-400">‧</span>
 					<span>{date}</span>
 					{identity.did === ctx.session?.did && (
 						<>
-							<span className="text-stone-500">|</span>
+							<span className="text-stone-400">‧</span>
 							<a href={`/${user}/${slug}/edit`}>edit</a>
 						</>
 					)}

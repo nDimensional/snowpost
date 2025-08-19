@@ -11,11 +11,7 @@ export function Login({ ctx, request }: RequestInfo) {
 			>
 				<label className="my-2 flex items-center">
 					<span className="mr-3">handle</span>
-					<input
-						name="handle"
-						className="border border-stone-400 px-1"
-						value="syntacrobat.xyz"
-					/>
+					<input name="handle" className="border border-stone-400 px-1" />
 				</label>
 				<input
 					type="submit"

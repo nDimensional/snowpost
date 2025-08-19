@@ -20,9 +20,6 @@ export async function Directory({ ctx }: RequestInfo<{}>) {
 		<div>
 			<div className="flex flex-row gap-2 py-2">
 				<ul>
-					<li>
-						<a href="/">/</a>
-					</li>
 					{userList.map(({ did, handle }) => {
 						const user = handle ?? did;
 						return (
