@@ -5,10 +5,15 @@ html {
 	background-color: var(--color-stone-100);
 }
 
+body {
+	height: 100vh;
+}
+
 #root {
-	margin-top: 32px;
-	margin-bottom: 32px;
+	padding-top: 32px;
+	padding-bottom: 32px;
 	max-width: var(--container-3xl);
+	height: 100vh;
 }
 
 #root > main {
@@ -17,7 +22,7 @@ html {
 
 @media (max-width: 800px) {
 	#root {
-		margin: 0;
+		padding: 0;
 		max-width: none;
 		min-width: 320px;
 	}

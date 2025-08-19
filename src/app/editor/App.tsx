@@ -57,8 +57,32 @@ export const App: React.FC<AppProps> = ({ session }) => {
 		return () => window.removeEventListener("beforeunload", onBeforeUnload);
 	}, []);
 
-	const handlePost = useCallback(() => {
+	const handlePost = useCallback(async () => {
+		if (session === null || contentRef.current === null) {
+			return;
+		}
+
 		console.log("I should post", session, contentRef.current);
+		const content = exportAST({ content: contentRef.current });
+		try {
+			const res = await fetch(`/api/post`, {
+				method: "POST",
+				body: JSON.stringify(content),
+			});
+
+			if (!res.ok) {
+				const msg = await res.text();
+				throw new Error(`${res.status} ${res.statusText}: ${msg}`);
+			}
+
+			console.log("yay posted", res.headers);
+			const location = res.headers.get("Location");
+			if (location !== null) {
+				window.location.href = location;
+			}
+		} catch (err) {
+			console.error(err);
+		}
 	}, []);
 
 	return (

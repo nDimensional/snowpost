@@ -11,8 +11,8 @@ import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { client } from "@/app/auth";
-import { sessionStore } from "@/app/auth/session";
-import { handlePattern } from "@/app/shared/utils";
+import { resolveUser } from "@/app/shared/resolveUser";
+import { getClock, handlePattern } from "@/app/shared/utils";
 import {
 	createSessionCookie,
 	generateSessionId,
@@ -128,6 +128,42 @@ export default defineApp([
 
 		ctx.session = JSON.parse(value);
 	},
+
+	route("/api/post", async ({ ctx, request }) => {
+		if (ctx.session === undefined || ctx.session === null) {
+			throw new ErrorResponse(401, "Unauthorized");
+		}
+
+		const identity = await resolveUser(ctx.session.did);
+		if (identity === null) {
+			throw new ErrorResponse(404, `Failed to resolve user ${ctx.session.did}`);
+		}
+
+		let content: {};
+		try {
+			content = await request.json();
+		} catch (err) {
+			console.error(err);
+			throw new ErrorResponse(400, "Bad Request");
+		}
+
+		const clock = getClock();
+
+		try {
+			await env.R2.put(
+				`${ctx.session.did}/${clock}/post.json`,
+				JSON.stringify(content),
+			);
+		} catch (err) {
+			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
+		}
+
+		const user = identity.handle ?? identity.did;
+		return new Response(null, {
+			status: 201,
+			headers: { Location: `/${user}/${clock}` },
+		});
+	}),
 
 	render(Document, [
 		route("/", Home),
