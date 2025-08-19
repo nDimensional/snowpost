@@ -15,8 +15,18 @@
 
 	"r2_buckets": [
 		{
+			"binding": "R2",
 			"bucket_name": "snowpost",
-			"binding": "R2"
+			"experimental_remote": true
+		}
+	],
+
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "snowpost",
+			"database_id": "d7a9bc91-bdf9-4859-9c38-601d27e9836b",
+			"experimental_remote": true
 		}
 	],
 

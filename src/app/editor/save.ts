@@ -4,11 +4,9 @@ import { Descendant, Element, Text } from "slate";
 import type { PtDocument, PtInlineElement } from "./types.js";
 import { signalInvalidType } from "./utils.js";
 
-export function exportAST(doc: PtDocument): { root: mdast.Root } {
-	const rootContent = Array.from(exportBlockContent(doc.content));
-	return {
-		root: { type: "root", children: rootContent },
-	};
+export function exportAST(content: Descendant[]): mdast.Root {
+	const rootContent = Array.from(exportBlockContent(content));
+	return { type: "root", children: rootContent };
 }
 
 function* exportBlockContent(

@@ -10,6 +10,7 @@ export default defineConfig({
 	plugins: [
 		cloudflare({
 			viteEnvironment: { name: "worker" },
+			experimental: { remoteBindings: true },
 		}),
 		redwood(),
 		tailwindcss(),

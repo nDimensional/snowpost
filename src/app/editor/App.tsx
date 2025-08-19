@@ -45,7 +45,7 @@ export const App: React.FC<AppProps> = ({ session }) => {
 
 	const save = useDebouncedCallback(() => {
 		if (typeof window !== "undefined") {
-			console.log(exportAST({ content: contentRef.current ?? [] }));
+			console.log(exportAST(contentRef.current ?? []));
 			const data = saveDocument({ content: contentRef.current ?? [] });
 			localStorage.setItem("prototypical:content", data);
 		}
@@ -63,7 +63,7 @@ export const App: React.FC<AppProps> = ({ session }) => {
 		}
 
 		console.log("I should post", session, contentRef.current);
-		const content = exportAST({ content: contentRef.current });
+		const content = exportAST(contentRef.current);
 		try {
 			const res = await fetch(`/api/post`, {
 				method: "POST",

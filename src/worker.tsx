@@ -9,6 +9,7 @@ import { Home } from "@/app/pages/Home";
 import { About } from "@/app/pages/About";
 import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
+import { Profile } from "@/app/pages/Profile";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { client } from "@/app/auth";
 import { resolveUser } from "@/app/shared/resolveUser";
@@ -139,21 +140,27 @@ export default defineApp([
 			throw new ErrorResponse(404, `Failed to resolve user ${ctx.session.did}`);
 		}
 
-		let content: {};
+		let root: {};
 		try {
-			content = await request.json();
+			root = await request.json();
 		} catch (err) {
 			console.error(err);
 			throw new ErrorResponse(400, "Bad Request");
 		}
 
-		const clock = getClock();
+		const [clock, date] = getClock();
 
 		try {
 			await env.R2.put(
 				`${ctx.session.did}/${clock}/post.json`,
-				JSON.stringify(content),
+				JSON.stringify({ root, date: date.toISOString() }),
+				{ httpMetadata: { contentType: "application/json" } },
 			);
+
+			const stmt = env.DB.prepare(
+				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
+			).bind(identity.did, identity.handle, clock);
+			await stmt.run();
 		} catch (err) {
 			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
 		}
@@ -167,9 +174,11 @@ export default defineApp([
 
 	render(Document, [
 		route("/", Home),
+		route("/favicon.ico", () => new Response(null, { status: 404 })),
 		route("/about", About),
 		route("/login", Login),
 		route("/write", Write),
+		route("/:user", Profile),
 		route("/:user/:slug", ViewPost),
 	]),
 ]);

@@ -5,40 +5,6 @@ import { env } from "cloudflare:workers";
 import { renderPost } from "@/app/shared/renderPost";
 import { resolveUser } from "@/app/shared/resolveUser";
 
-const samplePost: mdast.Root = {
-	type: "root",
-	children: [
-		{
-			type: "heading",
-			depth: 1,
-			children: [
-				{
-					type: "text",
-					value: "This is what it's all about",
-				},
-			],
-		},
-		{
-			type: "paragraph",
-			children: [
-				{
-					type: "text",
-					value: "There's a lot of neat stuff that happens in Paris...",
-				},
-			],
-		},
-		{
-			type: "paragraph",
-			children: [
-				{
-					type: "text",
-					value: "",
-				},
-			],
-		},
-	],
-};
-
 async function getPost(
 	identity: { did: string; handle: string | null },
 	slug: string,
@@ -46,9 +12,8 @@ async function getPost(
 	const key = `${identity.did}/${slug}/post.json`;
 	const object = await env.R2.get(key);
 	if (object === null) {
-		// const user = identity.handle ?? identity.did;
-		// return new Response(`Post ${user}/${slug} Not Found`, { status: 404 });
-		return { date: new Date().toISOString(), root: samplePost };
+		const user = identity.handle ?? identity.did;
+		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
 	}
 
 	return await object.json();
@@ -63,27 +28,29 @@ export async function ViewPost({
 		throw new ErrorResponse(404, `Failed to resolve user ${user}`);
 	}
 
-	const { date = new Date().toISOString(), root } = await getPost(
-		identity,
-		slug,
-	);
+	const post = await getPost(identity, slug);
 
 	const handle = identity.handle ?? identity.did;
+	const date = new Date(post.date).toLocaleDateString();
 
-	return (
-		<div>
-			<div className="flex flex-row gap-2 py-2">
-				<a href={`/${handle}`}>{handle}</a>
-				<span className="text-stone-500">|</span>
-				<span>{date}</span>
-				{identity.did === ctx.session?.did && (
-					<>
-						<span className="text-stone-500">|</span>
-						<a href={`/${user}/${slug}/edit`}>edit</a>
-					</>
-				)}
+	try {
+		return (
+			<div>
+				<div className="flex flex-row gap-2 py-2">
+					<a href={`/${handle}`}>{handle}</a>
+					<span className="text-stone-500">|</span>
+					<span>{date}</span>
+					{identity.did === ctx.session?.did && (
+						<>
+							<span className="text-stone-500">|</span>
+							<a href={`/${user}/${slug}/edit`}>edit</a>
+						</>
+					)}
+				</div>
+				<div className="content">{renderPost(post.root)}</div>
 			</div>
-			<div className="content">{renderPost(root)}</div>
-		</div>
-	);
+		);
+	} catch (err) {
+		throw new ErrorResponse(500, `Error rendering post - ${err}`);
+	}
 }
