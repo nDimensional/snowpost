@@ -36,15 +36,14 @@ export async function ViewPost({
 	try {
 		return (
 			<div>
-				<div className="flex flex-row gap-2 py-2">
+				<div className="inline-flex flex-row gap-2 py-2">
 					<a href={`/${handle}`}>{handle}</a>
 					<span className="text-stone-400">‧</span>
 					<span>{date}</span>
 					{identity.did === ctx.session?.did && (
-						<>
-							<span className="text-stone-400">‧</span>
+						<span className="flex-1 inline-flex justify-end">
 							<a href={`/${user}/${slug}/edit`}>edit</a>
-						</>
+						</span>
 					)}
 				</div>
 				<div className="content">{renderPost(post.root)}</div>

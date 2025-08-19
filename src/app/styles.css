@@ -2,7 +2,7 @@
 
 @font-face {
 	font-family: "PT Serif";
-	src: url("/PTSerif-Regular.ttf") format("truetype");
+	src: url("/PT_Serif/PTSerif-Regular.ttf") format("truetype");
 	font-weight: normal;
 	font-style: normal;
 	font-display: block;
@@ -10,7 +10,7 @@
 
 @font-face {
 	font-family: "PT Serif";
-	src: url("/PTSerif-Italic.ttf") format("truetype");
+	src: url("/PT_Serif/PTSerif-Italic.ttf") format("truetype");
 	font-weight: normal;
 	font-style: italic;
 	font-display: block;
@@ -18,7 +18,7 @@
 
 @font-face {
 	font-family: "PT Serif";
-	src: url("/PTSerif-bold.ttf") format("truetype");
+	src: url("/PT_Serif/PTSerif-Bold.ttf") format("truetype");
 	font-weight: bold;
 	font-style: normal;
 	font-display: block;
@@ -26,7 +26,7 @@
 
 @font-face {
 	font-family: "PT Serif";
-	src: url("/PTSerif-BoldItalic.ttf") format("truetype");
+	src: url("/PT_Serif/PTSerif-BoldItalic.ttf") format("truetype");
 	font-weight: bold;
 	font-style: italic;
 	font-display: block;
