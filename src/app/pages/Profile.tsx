@@ -2,13 +2,12 @@ import { ErrorResponse, RequestInfo } from "rwsdk/worker";
 import { env } from "cloudflare:workers";
 
 import { resolveUser } from "@/app/shared/resolveUser";
-import { handlePattern } from "../shared/utils";
+import { handlePattern } from "@/app/shared/utils";
 
 async function getPostList(identity: {
 	did: string;
 	handle: string | null;
 }): Promise<{ slug: string }[]> {
-	console.log("IDENTITY", identity.did);
 	const result = await env.DB.prepare("SELECT slug FROM posts WHERE did = ?")
 		.bind(identity.did)
 		.all<{ slug: string }>();
@@ -19,7 +18,6 @@ export async function Profile({
 	ctx,
 	params: { user },
 }: RequestInfo<{ user: string }>) {
-	console.log("REQ", user);
 	if (!handlePattern.test(user)) {
 		throw new ErrorResponse(400, "Invalid handle");
 	}
@@ -37,6 +35,9 @@ export async function Profile({
 		<div>
 			<div className="flex flex-row gap-2 py-2">
 				<ul>
+					<li>
+						<a href="/">/</a>
+					</li>
 					<li>
 						<a href={`/${handle}`}>{handle}</a>
 					</li>

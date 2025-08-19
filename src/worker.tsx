@@ -9,6 +9,7 @@ import { Home } from "@/app/pages/Home";
 import { About } from "@/app/pages/About";
 import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
+import { Directory } from "@/app/pages/Directory";
 import { Profile } from "@/app/pages/Profile";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { client } from "@/app/auth";
@@ -178,6 +179,7 @@ export default defineApp([
 		route("/about", About),
 		route("/login", Login),
 		route("/write", Write),
+		route("/directory", Directory),
 		route("/:user", Profile),
 		route("/:user/:slug", ViewPost),
 	]),
