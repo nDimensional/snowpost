@@ -76,8 +76,8 @@ a {
 }
 
 #home {
-	font-size: 20px;
-	vertical-align: text-top;
+	/*font-size: 20px;
+	vertical-align: text-top;*/
 	text-decoration: none;
 	user-select: none;
 }

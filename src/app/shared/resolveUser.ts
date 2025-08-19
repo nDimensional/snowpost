@@ -17,9 +17,11 @@ export async function resolveUser(
 		if (did.startsWith("did:plc:")) {
 			try {
 				const res = await fetch(`${plcApiUrl}/${did}`);
-				const { alsoKnownAs } = await res.json<{ alsoKnownAs: string[] }>();
-				const url = new URL(alsoKnownAs[0]);
-				handle = url.host;
+				if (res.ok) {
+					const { alsoKnownAs } = await res.json<{ alsoKnownAs: string[] }>();
+					const url = new URL(alsoKnownAs[0]);
+					handle = url.host;
+				}
 			} catch (err) {
 				console.error(err);
 			}
@@ -40,7 +42,15 @@ export async function resolveUser(
 
 		try {
 			const res = await fetch(`${bskyApiUrl}?handle=${handle}`);
+			if (!res.ok) {
+				return null;
+			}
+
 			const result = await res.json<{ did: string }>();
+			if (typeof result.did !== "string" || !result.did.startsWith("did:")) {
+				return null;
+			}
+
 			did = result.did;
 		} catch (err) {
 			console.error(err);
