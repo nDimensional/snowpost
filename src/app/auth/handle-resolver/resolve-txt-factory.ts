@@ -85,7 +85,7 @@
 // 		if (err["code"] === "EBADNAME") throw err;
 
 // 		// DNS server unreachable
-// 		// if (err['code'] === 'ETIMEOUT') throw err
+// 		if (err["code"] === "ETIMEOUT") throw err;
 // 	}
 
 // 	// Historically, errors were not thrown here. A "null" value indicates to the

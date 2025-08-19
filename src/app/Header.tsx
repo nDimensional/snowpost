@@ -6,12 +6,15 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title }) => {
 	return (
-		<header className="p-4 bg-stone-300 flex flex-row justify-between">
+		<header className="py-4 px-6 bg-stone-300 flex flex-row justify-between items-center">
 			<span>{title}</span>
 			<span className="inline-flex gap-2">
 				<a href="/about">about</a>
 				<span>|</span>
-				<button className="cursor-pointer underline">sign in</button>
+				{/*<button className="cursor-pointer underline">sign in</button>*/}
+				<a className="cursor-pointer underline" href="/login">
+					sign in
+				</a>
 			</span>
 		</header>
 	);

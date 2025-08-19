@@ -15,7 +15,14 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 		</head>
 		<body>
 			<div id="root" className="my-8 max-w-3xl mx-auto">
-				<Header title="@snowpo.st" />
+				{/*<Header title={<span className="text-2xl">❅</span>} />*/}
+				<Header
+					title={
+						<a href="/" id="home">
+							❅
+						</a>
+					}
+				/>
 				<main>{children}</main>
 			</div>
 		</body>

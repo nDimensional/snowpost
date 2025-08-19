@@ -31,6 +31,10 @@ a {
 	text-decoration: underline;
 }
 
+#home {
+	text-decoration: none;
+}
+
 .editor {
 	padding: 0 16px;
 	outline: none;

@@ -13,11 +13,11 @@
 // 	AtprotoHandleResolverNode,
 // 	AtprotoHandleResolverNodeOptions,
 // } from "@/app/auth/handle-resolver";
-// // import {
-// // 	NodeSavedSessionStore,
-// // 	NodeSavedStateStore,
-// // 	toDpopKeyStore,
-// // } from "./dpop-store.js";
+// import {
+// 	NodeSavedSessionStore,
+// 	NodeSavedStateStore,
+// 	toDpopKeyStore,
+// } from "./dpop-store.js";
 // import { Override } from "./util.js";
 
 // export type * from "./dpop-store.js";
@@ -26,10 +26,10 @@
 // export type NodeOAuthClientOptions = Override<
 // 	OAuthClientOptions,
 // 	{
-// // 		responseMode?: Exclude<OAuthResponseMode, "fragment">;
+// 		responseMode?: Exclude<OAuthResponseMode, "fragment">;
 
-// // 		stateStore: NodeSavedStateStore;
-// // 		sessionStore: NodeSavedSessionStore;
+// 		stateStore: NodeSavedStateStore;
+// 		sessionStore: NodeSavedSessionStore;
 
 // 		/**
 // 		 * Used to build a {@link NodeOAuthClientOptions.handleResolver} if none is

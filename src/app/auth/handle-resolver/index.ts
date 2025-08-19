@@ -1,4 +1,4 @@
-// import { Fetch, safeFetchWrap } from "@atproto-labs/fetch-node";
+// // import { Fetch, safeFetchWrap } from "@atproto-labs/fetch-node";
 // import {
 // 	AtprotoHandleResolver,
 // 	HandleResolver,
@@ -20,7 +20,7 @@
 // 	 *
 // 	 * @default `globalThis.fetch`
 // 	 */
-// 	fetch?: Fetch;
+// 	fetch?: (typeof globalThis)["fetch"];
 // };
 
 // export class AtprotoHandleResolverNode
