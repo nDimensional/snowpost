@@ -1,3 +1,4 @@
+import { Header } from "./Header";
 import styles from "./styles.css?url";
 
 export const Document: React.FC<{ children: React.ReactNode }> = ({
@@ -13,7 +14,10 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>
-			<div id="root">{children}</div>
+			<div id="root" className="my-8 max-w-3xl mx-auto">
+				<Header title="@snowpo.st" />
+				<main>{children}</main>
+			</div>
 		</body>
 	</html>
 );

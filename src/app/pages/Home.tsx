@@ -1,9 +1,9 @@
 import { RequestInfo } from "rwsdk/worker";
 
-export function Home({ ctx }: RequestInfo) {
+export function Home({ ctx, request }: RequestInfo) {
 	return (
-		<div>
-			<h1>Hello World</h1>
+		<div className="content">
+			<p>Hello world</p>
 		</div>
 	);
 }

@@ -1,3 +1,6 @@
 node_modules/
 dist/
+keys/
 .wrangler/
+.env
+.dev.vars

@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useState } from "react";
+import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { Descendant, createEditor } from "slate";
 import {
 	Slate,
@@ -54,9 +54,16 @@ export interface EditorProps {
 
 export const Editor: React.FC<EditorProps> = (props) => {
 	const [editor] = useState(() => withReact(withHistory(createEditor())));
+	const toolbarRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		if (toolbarRef.current !== null) {
+			// toolbarRef.current
+		}
+	}, []);
 
 	return (
-		<>
+		<div className="flex flex-row gap-3 h-max">
 			<Slate
 				editor={editor}
 				initialValue={
@@ -70,24 +77,19 @@ export const Editor: React.FC<EditorProps> = (props) => {
 					}
 				}}
 			>
-				<div className="flex gap-2 px-2">
-					<MarkButton format="bold" icon="/icons/format_bold.svg" />
-					<MarkButton format="italic" icon="/icons/format_italic.svg" />
-					{/*<MarkButton format="underline" icon="/icons/format_underlined.svg" />*/}
-					{/*<MarkButton format="code" icon="/icons/code.svg" />*/}
-					{/*<BlockButton format="paragraph" icon="/icons/format_paragraph.svg" />*/}
+				<div
+					className="flex flex-col gap-2 py-2 sticky top-0 self-start"
+					ref={toolbarRef}
+				>
 					<BlockButton format="h1" icon="/icons/format_h1.svg" />
 					<BlockButton format="h2" icon="/icons/format_h2.svg" />
 					<BlockButton format="h3" icon="/icons/format_h3.svg" />
 					<BlockButton format="blockquote" icon="/icons/format_quote.svg" />
-					{/*<BlockButton format="numbered-list" icon="format_list_numbered" />
-					<BlockButton format="bulleted-list" icon="format_list_bulleted" />
-					<BlockButton format="left" icon="format_align_left" />
-					<BlockButton format="center" icon="format_align_center" />
-					<BlockButton format="right" icon="format_align_right" />
-					<BlockButton format="justify" icon="format_align_justify" />*/}
+
+					<MarkButton format="bold" icon="/icons/format_bold.svg" />
+					<MarkButton format="italic" icon="/icons/format_italic.svg" />
 				</div>
-				<div className="border border-stone-200 focus-within:border-stone-300">
+				<div className="bg-white border border-stone-200 focus-within:border-stone-300 flex-1 max-w-2xl">
 					<Editable
 						className="editor"
 						renderElement={renderElement}
@@ -105,6 +107,6 @@ export const Editor: React.FC<EditorProps> = (props) => {
 					/>
 				</div>
 			</Slate>
-		</>
+		</div>
 	);
 };

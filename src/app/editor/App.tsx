@@ -59,13 +59,13 @@ export const App: React.FC<AppProps> = ({}) => {
 
 	return (
 		// <Provider theme={defaultTheme}>
-		<main className="p-2">
-			<section className="my-16 mx-auto max-w-2xl flex flex-col gap-2">
+		<div className="p-2">
+			<section className="my-4 mx-auto max-w-3xl flex flex-col gap-2">
 				{initialValue && (
 					<Editor initialValue={initialValue} onChange={handleContentChange} />
 				)}
 			</section>
-		</main>
+		</div>
 		// </Provider>
 	);
 };

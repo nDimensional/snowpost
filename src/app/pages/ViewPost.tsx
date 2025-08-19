@@ -121,13 +121,14 @@ export async function ViewPost({
 	const handle = identity.handle ?? identity.did;
 
 	return (
-		<div className="my-16 max-w-2xl mx-auto p-2">
-			<header className="py-2 flex flex-row gap-2">
+		<div>
+			<div className="flex flex-row gap-2 py-2">
 				<a href={`/${handle}`}>{handle}</a>
 				<span className="text-stone-500">/</span>
 				<span>{slug}</span>
-			</header>
-			<main className="content">{renderPost(root)}</main>
+			</div>
+			<pre>{JSON.stringify(import.meta.env)}</pre>
+			<div className="content">{renderPost(root)}</div>
 		</div>
 	);
 }

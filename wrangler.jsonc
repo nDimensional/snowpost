@@ -22,6 +22,18 @@
 
 	"kv_namespaces": [
 		{
+			"binding": "OAUTH_STATE_STORE",
+			"id": "1f26cfb48e86432cb49c712c1e035d69"
+		},
+		{
+			"binding": "OAUTH_SESSION_STORE",
+			"id": "186f8676b1ee4f3497c295ee6937d97a"
+		},
+		{
+			"binding": "WEB_SESSION_STORE",
+			"id": "ce57a32cd8af41d2b6ee6c29107d508f"
+		},
+		{
 			"binding": "DID_TO_HANDLE",
 			"id": "f11b5fd9874b4d2489d969f201e89b86"
 		},
