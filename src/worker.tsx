@@ -20,6 +20,7 @@ import {
 	generateSessionId,
 	isValidSessionId,
 } from "rwsdk/auth";
+import { About } from "./app/pages/About";
 
 export type AppContext = {
 	session: { did: string; handle: string | null } | null;
@@ -199,6 +200,7 @@ export default defineApp([
 
 	render(Document, [
 		route("/", Home),
+		route("/about", About),
 		route("/login", Login),
 		route("/write", Write),
 		route("/directory", Directory),

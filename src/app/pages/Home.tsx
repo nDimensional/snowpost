@@ -2,20 +2,25 @@ import { RequestInfo } from "rwsdk/worker";
 
 import { Page } from "@/app/pages/Page";
 
-export async function Home({ ctx, request }: RequestInfo) {
+export async function Home({ ctx }: RequestInfo) {
 	return (
 		<Page session={ctx.session}>
 			<div className="content mt-16 mb-12 max-w-md">
 				<p>Hello world!</p>
+				<p>Snowpost is a simple, minimalist writing platform.</p>
+
 				<p>
-					Snowpost is a simple, minimalist writing platform. You can log in with
-					your <a href="https://bsky.app/">BlueSky</a> account and publish
-					beautiful static pages to share with the world.
+					You can log in with your <a href="https://bsky.app/">BlueSky</a>{" "}
+					account and publish beautiful static pages to share with the world.
+					That's it!
 				</p>
 				<p>
-					Your posts are stored as raw markdown on your PDS, which means that
-					you always retain access and ownership, even if the Snowpost website
-					goes down.
+					Read more about Snowpost <a href="/about">here</a>, browse the{" "}
+					<a href="/directory">directory</a> of posts, or get started{" "}
+					<a href="/write">writing a new post</a>.
+				</p>
+				<p className="">
+					❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❅ ❄ ❅ ❆
 				</p>
 			</div>
 		</Page>
