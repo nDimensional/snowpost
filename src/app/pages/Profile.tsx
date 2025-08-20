@@ -5,8 +5,6 @@ import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/ident
 
 import { client } from "@/app/oauth/oauth-client";
 
-import { handlePattern } from "@/app/shared/utils";
-
 async function getPostList(
 	identity: IdentityInfo,
 ): Promise<{ slug: string }[]> {
@@ -21,10 +19,6 @@ async function getPostList(
 export async function Profile({
 	params: { user },
 }: RequestInfo<{ user: string }>) {
-	if (!handlePattern.test(user)) {
-		throw new ErrorResponse(400, "Invalid handle");
-	}
-
 	let identity: IdentityInfo;
 	try {
 		identity = await client.identityResolver.resolve(user);
