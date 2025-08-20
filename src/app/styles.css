@@ -51,6 +51,12 @@ body {
 	min-height: 100svh;
 }
 
+#root > header {
+	font-size: 16px;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
 #root > main {
 	padding: 0 16px;
 }
@@ -66,15 +72,15 @@ body {
 		min-width: 320px;
 	}
 
-	#root > main {
-		padding: 8px;
+	#root > header {
+		font-size: 16px;
+		padding-left: 8px;
+		padding-right: 8px;
 	}
-}
 
-header {
-	font-size: 16px;
-	/*padding-left: 16px;
-	padding-right: 16px;*/
+	#root > main {
+		padding: 0 8px;
+	}
 }
 
 hr {

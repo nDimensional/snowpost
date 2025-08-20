@@ -4,7 +4,7 @@ export const Page: React.FC<{
 }> = (props) => {
 	return (
 		<div id="root" className="py-8 mx-auto flex flex-col">
-			<header className="py-3 px-4 bg-stone-300 flex flex-row justify-between items-center">
+			<header className="py-3 bg-stone-300 flex flex-row justify-between items-center">
 				<span>
 					<a href="/" className="icon">
 						❅
