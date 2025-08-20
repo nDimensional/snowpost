@@ -12,8 +12,8 @@ import { Write } from "@/app/pages/Write";
 import { Directory } from "@/app/pages/Directory";
 import { Profile } from "@/app/pages/Profile";
 import { ViewPost } from "@/app/pages/ViewPost";
-import { client } from "@/app/auth";
-import { resolveUser } from "@/app/shared/resolveUser";
+import { client } from "@/app/oauth/oauth-client";
+
 import { bareHandlePattern, getClock, handlePattern } from "@/app/shared/utils";
 import {
 	createSessionCookie,
@@ -47,11 +47,8 @@ export default defineApp([
 			const url = new URL(request.url);
 			const params = new URLSearchParams(url.search);
 			const { session, state } = await client.callback(params);
-			// Process successful authentication here
-			console.log("authorize() was called with state:", state);
-			console.log("User authenticated as:", session.did);
 
-			// const tokenInfo = await session.getTokenInfo(false);
+			// TODO: pass redirect path in state
 
 			const sessionId = await generateSessionId({
 				secretKey: env.AUTH_SECRET_KEY,
@@ -140,9 +137,17 @@ export default defineApp([
 			throw new ErrorResponse(401, "Unauthorized");
 		}
 
-		const identity = await resolveUser(ctx.session.did);
-		if (identity === null) {
-			throw new ErrorResponse(404, `Failed to resolve user ${ctx.session.did}`);
+		const { did } = ctx.session;
+
+		let handle = null;
+		try {
+			const identity = await client.identityResolver.resolve(did);
+			if (identity.handle !== "handle.invalid") {
+				handle = identity.handle;
+			}
+		} catch (err) {
+			console.error(err);
+			throw new ErrorResponse(400, "Failed to resolve identity");
 		}
 
 		let root: {};
@@ -157,20 +162,20 @@ export default defineApp([
 
 		try {
 			await env.R2.put(
-				`${ctx.session.did}/${clock}/post.json`,
+				`${did}/${clock}/post.json`,
 				JSON.stringify({ root, date: date.toISOString() }),
 				{ httpMetadata: { contentType: "application/json" } },
 			);
 
 			const stmt = env.DB.prepare(
 				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
-			).bind(identity.did, identity.handle, clock);
+			).bind(did, handle, clock);
 			await stmt.run();
 		} catch (err) {
 			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
 		}
 
-		const user = identity.handle ?? identity.did;
+		const user = handle ?? did;
 		return new Response(null, {
 			status: 201,
 			headers: { Location: `/${user}/${clock}` },

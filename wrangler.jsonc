@@ -44,6 +44,14 @@
 			"id": "ce57a32cd8af41d2b6ee6c29107d508f"
 		},
 		{
+			"binding": "DID_CACHE",
+			"id": "d9ca3ea61ccd4476a57364d3fae676f7"
+		},
+		{
+			"binding": "HANDLE_CACHE",
+			"id": "814c6c31313c4dc6a6d34627d827bf94"
+		},
+		{
 			"binding": "DID_TO_HANDLE",
 			"id": "f11b5fd9874b4d2489d969f201e89b86"
 		},

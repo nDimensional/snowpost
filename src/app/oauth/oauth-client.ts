@@ -8,12 +8,18 @@ import {
 	NodeSavedSession,
 } from "atproto-oauth-client-cloudflare-workers";
 
+import { didCache } from "@/app/oauth/did-cache";
+import { handleCache } from "@/app/oauth/handle-cache";
+
 const host = "https://snowpost.ndim.workers.dev";
 
 const parseKey = (value: string) =>
 	JSON.parse(Buffer.from(value, "base64").toString("utf8"));
 
 export const client = new NodeOAuthClient({
+	didCache: didCache,
+	handleCache: handleCache,
+
 	clientMetadata: {
 		client_id: `${host}/oauth/client-metadata.json`,
 		client_name: "Snowpost",
