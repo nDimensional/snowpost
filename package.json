@@ -28,7 +28,7 @@
 		"@types/hast": "^3.0.4",
 		"@types/is-hotkey": "^0.1.10",
 		"@types/mdast": "^4.0.4",
-		"atproto-oauth-client-cloudflare-workers": "^0.0.4",
+		"atproto-oauth-client-cloudflare-workers": "^0.0.5",
 		"is-hotkey": "^0.2.0",
 		"mdast-util-to-hast": "^13.2.0",
 		"rwsdk": "0.1.35",
