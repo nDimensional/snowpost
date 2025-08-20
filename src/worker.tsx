@@ -14,7 +14,7 @@ import { Profile } from "@/app/pages/Profile";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { client } from "@/app/auth";
 import { resolveUser } from "@/app/shared/resolveUser";
-import { getClock, handlePattern } from "@/app/shared/utils";
+import { bareHandlePattern, getClock, handlePattern } from "@/app/shared/utils";
 import {
 	createSessionCookie,
 	generateSessionId,
@@ -82,9 +82,13 @@ export default defineApp([
 	route("/oauth/login", async ({ ctx, request }) => {
 		const url = new URL(request.url);
 		const params = new URLSearchParams(url.search);
-		const handle = params.get("handle");
+		let handle = params.get("handle");
 		if (handle === null) {
 			throw new ErrorResponse(400, "missing 'handle' query parameter");
+		}
+
+		if (bareHandlePattern.test(handle)) {
+			handle += ".bsky.social";
 		} else if (!handlePattern.test(handle)) {
 			throw new ErrorResponse(400, "invalid handle");
 		}

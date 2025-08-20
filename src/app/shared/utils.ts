@@ -2,6 +2,8 @@
 export const handlePattern =
 	/^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
+export const bareHandlePattern = /^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+
 const B32_CHARS = "234567abcdefghijklmnopqrstuvwxyz";
 
 export function getClock(): [clock: string, date: Date] {
