@@ -1,13 +1,15 @@
 import { ErrorResponse, RequestInfo } from "rwsdk/worker";
 import { env } from "cloudflare:workers";
 
-import { resolveUser } from "@/app/shared/resolveUser";
+import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
+
+import { client } from "@/app/oauth/oauth-client";
+
 import { handlePattern } from "@/app/shared/utils";
 
-async function getPostList(identity: {
-	did: string;
-	handle: string | null;
-}): Promise<{ slug: string }[]> {
+async function getPostList(
+	identity: IdentityInfo,
+): Promise<{ slug: string }[]> {
 	const result = await env.DB.prepare(
 		"SELECT slug FROM posts WHERE did = ? ORDER BY slug DESC",
 	)
@@ -17,21 +19,24 @@ async function getPostList(identity: {
 }
 
 export async function Profile({
-	ctx,
 	params: { user },
 }: RequestInfo<{ user: string }>) {
 	if (!handlePattern.test(user)) {
 		throw new ErrorResponse(400, "Invalid handle");
 	}
 
-	const identity = await resolveUser(user);
-	if (identity === null) {
+	let identity: IdentityInfo;
+	try {
+		identity = await client.identityResolver.resolve(user);
+	} catch (err) {
+		console.error(err);
 		throw new ErrorResponse(404, `Failed to resolve user ${user}`);
 	}
 
 	const postList = await getPostList(identity);
 
-	const handle = identity.handle ?? identity.did;
+	const handle =
+		identity.handle === "handle.invalid" ? identity.did : identity.handle;
 
 	return (
 		<div>
