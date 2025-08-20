@@ -191,8 +191,7 @@ export default defineApp([
 			status: 302,
 			headers: {
 				Location: "/",
-				"Set-Cookie":
-					"token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+				"Set-Cookie": `${cookieName}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
 			},
 		});
 	}),
