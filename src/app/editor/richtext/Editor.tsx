@@ -10,7 +10,13 @@ import {
 import { withHistory } from "slate-history";
 import isHotkey from "is-hotkey";
 
-import { BlockButton, MarkButton, MarkType, toggleMark } from "./Toolbar.js";
+import {
+	BlockButton,
+	LinkButton,
+	MarkButton,
+	MarkType,
+	toggleMark,
+} from "./Toolbar.js";
 import { signalInvalidType } from "./utils.js";
 
 const HOTKEYS: Record<string, MarkType> = {
@@ -31,6 +37,8 @@ function renderElement(props: RenderElementProps) {
 			return <h3 {...props.attributes}>{props.children}</h3>;
 		case "blockquote":
 			return <blockquote {...props.attributes}>{props.children}</blockquote>;
+		case "link":
+			return <a {...props.attributes}>{props.children}</a>;
 		default:
 			signalInvalidType(props.element);
 	}
@@ -54,13 +62,6 @@ export interface EditorProps {
 
 export const Editor: React.FC<EditorProps> = (props) => {
 	const [editor] = useState(() => withReact(withHistory(createEditor())));
-	const toolbarRef = useRef<HTMLDivElement | null>(null);
-
-	useEffect(() => {
-		if (toolbarRef.current !== null) {
-			// toolbarRef.current
-		}
-	}, []);
 
 	return (
 		<div className="flex flex-col h-max">
@@ -77,14 +78,13 @@ export const Editor: React.FC<EditorProps> = (props) => {
 					}
 				}}
 			>
-				<div
-					className="flex flex-row gap-2 px-2 py-2 sticky top-0 z-1 bg-stone-100 border border-stone-300 self-stretch"
-					ref={toolbarRef}
-				>
+				<div className="flex flex-row gap-2 px-2 py-2 sticky top-0 z-1 bg-stone-100 border border-stone-300 self-stretch">
 					<BlockButton format="h1" icon="/icons/format_h1.svg" />
 					<BlockButton format="h2" icon="/icons/format_h2.svg" />
 					<BlockButton format="h3" icon="/icons/format_h3.svg" />
 					<BlockButton format="blockquote" icon="/icons/format_quote.svg" />
+
+					<LinkButton icon="/icons/link.svg" />
 
 					<MarkButton format="bold" icon="/icons/format_bold.svg" />
 					<MarkButton format="italic" icon="/icons/format_italic.svg" />

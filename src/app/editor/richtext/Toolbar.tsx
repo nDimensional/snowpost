@@ -127,3 +127,22 @@ export const MarkButton = ({ format, icon }: MarkButtonProps) => {
 		</Button>
 	);
 };
+
+export interface LinkButtonProps {
+	icon: string;
+}
+
+export const LinkButton = ({ icon }: LinkButtonProps) => {
+	// const editor = useSlate();
+	return (
+		<Button
+		// active={isMarkActive(editor, format)}
+		// onMouseDown={(event: MouseEvent<HTMLSpanElement>) => {
+		// 	event.preventDefault();
+		// 	toggleMark(editor, format);
+		// }}
+		>
+			<img src={icon} />
+		</Button>
+	);
+};

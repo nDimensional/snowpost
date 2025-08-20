@@ -1,4 +1,3 @@
-import type mdast from "mdast";
 import { ErrorResponse, RequestInfo } from "rwsdk/worker";
 import { env } from "cloudflare:workers";
 
@@ -7,19 +6,20 @@ import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/ident
 import { Page } from "@/app/pages/Page";
 import { renderPost } from "@/app/shared/renderPost";
 import { client } from "@/app/oauth/oauth-client";
+import { parseClock } from "@/app/shared/utils";
 
 async function getPost(
 	user: string,
 	slug: string,
 	identity: IdentityInfo,
-): Promise<{ user: string; date: string; root: mdast.Root }> {
-	const key = `${identity.did}/${slug}/post.json`;
+): Promise<string> {
+	const key = `${identity.did}/${slug}/content.xhtml`;
 	const object = await env.R2.get(key);
 	if (object === null) {
 		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
 	}
 
-	return await object.json();
+	return await object.text();
 }
 
 export async function ViewPost({
@@ -36,31 +36,30 @@ export async function ViewPost({
 	const post = await getPost(user, slug, identity);
 
 	const handle = identity.handle ?? identity.did;
-	const date = new Date(post.date).toLocaleDateString();
+	const date = parseClock(slug).toLocaleDateString();
 
-	try {
-		return (
-			<Page session={ctx.session}>
-				<nav className="flex flex-row py-2 justify-between mb-12">
-					<span className="flex flex-row gap-1">
-						<a href={`/${handle}`}>{handle}</a>
-						<span className="text-stone-400">‧</span>
-						<span>
-							<span>{date}</span>
+	return (
+		<Page session={ctx.session}>
+			<nav className="flex flex-row py-2 justify-between">
+				<span className="flex flex-row gap-1">
+					<a href={`/${handle}`}>{handle}</a>
+					<span className="text-stone-400">‧</span>
+					<span>
+						<span>{date}</span>
+					</span>
+				</span>
+				{ctx.session?.did === identity.did && (
+					<span>
+						<span className="flex-1 inline-flex justify-end">
+							<a href={`/${user}/${slug}/edit`}>edit</a>
 						</span>
 					</span>
-					{ctx.session?.did === identity.did && (
-						<span>
-							<span className="flex-1 inline-flex justify-end">
-								<a href={`/${user}/${slug}/edit`}>edit</a>
-							</span>
-						</span>
-					)}
-				</nav>
-				<div className="content">{renderPost(post.root)}</div>
-			</Page>
-		);
-	} catch (err) {
-		throw new ErrorResponse(500, `Error rendering post - ${err}`);
-	}
+				)}
+			</nav>
+			<div
+				className="content my-12"
+				dangerouslySetInnerHTML={{ __html: post }}
+			/>
+		</Page>
+	);
 }

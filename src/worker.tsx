@@ -1,12 +1,12 @@
 import { defineApp, ErrorResponse } from "rwsdk/worker";
 import { render, route } from "rwsdk/router";
 
+import { micromark } from "micromark";
 import { env } from "cloudflare:workers";
 
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
-import { About } from "@/app/pages/About";
 import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
 import { Directory } from "@/app/pages/Directory";
@@ -152,23 +152,17 @@ export default defineApp([
 
 		const { did, handle } = ctx.session;
 
-		let root: {};
-		try {
-			root = await request.json();
-		} catch (err) {
-			console.error(err);
-			throw new ErrorResponse(400, "Bad Request");
+		const contentType = request.headers.get("content-type");
+		if (contentType !== "text/markdown") {
+			throw new ErrorResponse(415, "Unsupported Media Type");
 		}
 
-		const [clock, date] = getClock();
+		const md = await request.text();
+		const xhtml = micromark(md);
+
+		const clock = getClock();
 
 		try {
-			await env.R2.put(
-				`${did}/${clock}/post.json`,
-				JSON.stringify({ root, date: date.toISOString() }),
-				{ httpMetadata: { contentType: "application/json" } },
-			);
-
 			const stmt = env.DB.prepare(
 				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
 			).bind(did, handle, clock);
@@ -177,12 +171,19 @@ export default defineApp([
 			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
 		}
 
+		await Promise.all([
+			// env.R2.put(`${did}/${clock}/content.md`, md, {
+			// 	httpMetadata: { contentType: "text/markdown" },
+			// }),
+			env.R2.put(`${did}/${clock}/content.xhtml`, xhtml, {
+				httpMetadata: { contentType: "application/xhtml+xml" },
+			}),
+		]);
+
 		const user = handle ?? did;
 		return new Response(null, {
 			status: 201,
-			headers: {
-				Location: `/${user}/${clock}`,
-			},
+			headers: { Location: `/${user}/${clock}` },
 		});
 	}),
 
@@ -198,7 +199,6 @@ export default defineApp([
 
 	render(Document, [
 		route("/", Home),
-		route("/about", About),
 		route("/login", Login),
 		route("/write", Write),
 		route("/directory", Directory),

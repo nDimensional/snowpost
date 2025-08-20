@@ -1,4 +1,5 @@
 import styles from "./styles.css?url";
+import fonts from "./fonts.css?url";
 
 export const Document: React.FC<{ children: React.ReactNode }> = ({
 	children,
@@ -10,7 +11,9 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 			<link rel="icon" href="/favicon.ico" type="image/x-icon" />
 			<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 			<title>Snowpost</title>
+
 			<link rel="stylesheet" href={styles} />
+			<link rel="stylesheet" href={fonts} />
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>

@@ -29,7 +29,7 @@ export type PtHeadingThree = {
 // export type PtUnorderedList = { type: "ul"; children: PtListItem[] }
 // export type PtListItem = { type: "li"; children: PtText }
 
-export type PtText = { text: string; bold?: boolean; italic?: boolean };
+export type PtText = { text: string; bold?: true; italic?: true };
 
 export type PtBlockElement =
 	| PtParagraph
@@ -38,22 +38,30 @@ export type PtBlockElement =
 	| PtHeadingThree
 	| PtBlockquote;
 
-// export type PtInlineElement = PtEmphasis | PtStrong | PtLink | PtInlineCode
-// export type PtEmphasis = { type: "emphasis"; children: (PtInlineElement | PtText)[] }
-// export type PtStrong = { type: "strong"; children: (PtInlineElement | PtText)[] }
-// export type PtLink = {
-// 	type: "link"
-// 	url: string
-// 	title?: string
-// 	children: (PtInlineElement | PtText)[]
-// }
+export const isBlockElement = (element: PtElement): element is PtBlockElement =>
+	element.type === "paragraph" ||
+	element.type === "blockquote" ||
+	element.type === "h1" ||
+	element.type === "h2" ||
+	element.type === "h3";
+
+export type PtInlineElement = PtLink;
+
+export const isInlineElement = (
+	element: PtElement,
+): element is PtInlineElement => element.type === "link";
+
+export type PtLink = {
+	type: "link";
+	url: string;
+	title?: string;
+	children: PtText[];
+};
 
 // export type PtInlineCode = {
 // 	type: "inlineCode"
 // 	value: string
 // }
-
-export type PtInlineElement = never;
 
 export type PtElement = PtBlockElement | PtInlineElement;
 

@@ -1,7 +1,7 @@
 import { RequestInfo } from "rwsdk/worker";
 
 import { Page } from "@/app/pages/Page";
-import { App } from "@/app/editor/App";
+import { App } from "@/app/editor/markdown/App";
 
 export function Write({ ctx }: RequestInfo) {
 	return (

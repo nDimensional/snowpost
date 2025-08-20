@@ -5,11 +5,18 @@ import { Page } from "@/app/pages/Page";
 export async function Home({ ctx, request }: RequestInfo) {
 	return (
 		<Page session={ctx.session}>
-			<div className="content mt-16 mb-12">
-				<p>hello world</p>
-				{ctx.session && (
-					<p>you are logged in as {ctx.session.handle ?? ctx.session.did}</p>
-				)}
+			<div className="content mt-16 mb-12 max-w-md">
+				<p>Hello world!</p>
+				<p>
+					Snowpost is a simple, minimalist writing platform. You can log in with
+					your <a href="https://bsky.app/">BlueSky</a> account and publish
+					beautiful static pages to share with the world.
+				</p>
+				<p>
+					Your posts are stored as raw markdown on your PDS, which means that
+					you always retain access and ownership, even if the Snowpost website
+					goes down.
+				</p>
 			</div>
 		</Page>
 	);

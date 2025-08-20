@@ -1,37 +1,5 @@
 @import "tailwindcss";
 
-@font-face {
-	font-family: "PT Serif";
-	src: url("/PT_Serif/PTSerif-Regular.ttf") format("truetype");
-	font-weight: normal;
-	font-style: normal;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "PT Serif";
-	src: url("/PT_Serif/PTSerif-Italic.ttf") format("truetype");
-	font-weight: normal;
-	font-style: italic;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "PT Serif";
-	src: url("/PT_Serif/PTSerif-Bold.ttf") format("truetype");
-	font-weight: bold;
-	font-style: normal;
-	font-display: block;
-}
-
-@font-face {
-	font-family: "PT Serif";
-	src: url("/PT_Serif/PTSerif-BoldItalic.ttf") format("truetype");
-	font-weight: bold;
-	font-style: italic;
-	font-display: block;
-}
-
 html {
 	background-color: var(--color-stone-100);
 	font-family: "PT Serif", Garamond, serif;
@@ -97,6 +65,14 @@ a.icon {
 }
 
 .editor {
+	font-family: "IBM Plex Mono";
+}
+
+.editor .cm-content {
+	min-height: 320px;
+}
+
+/*.editor {
 	padding: 0 16px;
 	outline: none;
 
@@ -104,26 +80,28 @@ a.icon {
 	:focus {
 		outline: none;
 	}
-}
+}*/
 
 .editor,
 .content {
 	h1 {
 		font-size: 48px;
-		margin-top: 16px;
+		margin-top: 48px;
 		margin-bottom: 24px;
 		border-bottom: 3px solid var(--color-stone-200);
 	}
 
 	h2 {
 		font-size: 32px;
-		margin-top: 16px;
+		margin-top: 32px;
 		margin-bottom: 16px;
 		border-bottom: 1px solid var(--color-stone-200);
 	}
 
 	h3 {
 		font-size: 24px;
+		margin-top: 24px;
+		margin-bottom: 16px;
 	}
 
 	p {
@@ -132,10 +110,34 @@ a.icon {
 	}
 
 	blockquote {
-		margin: 0.5em 0;
-		padding: 0.75em;
+		margin: 1em 0;
+		contain: layout;
+		padding-left: 1em;
 		border-left: 4px solid var(--color-stone-400);
 		background-color: var(--color-stone-200);
 		font-size: 18px;
+	}
+
+	ol {
+		padding-left: 1em;
+		margin: 1em 0;
+		list-style: decimal;
+	}
+
+	ul {
+		padding-left: 1em;
+		list-style: disc;
+	}
+
+	li {
+		display: list-item;
+	}
+
+	pre {
+		margin: 1em 0;
+		padding: 8px;
+		font-size: 14px;
+		font-family: "IBM Plex Mono";
+		background-color: var(--color-stone-200);
 	}
 }

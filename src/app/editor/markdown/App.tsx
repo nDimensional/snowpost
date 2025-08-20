@@ -1,28 +1,14 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-
-import { Descendant } from "slate";
 import { useDebouncedCallback } from "use-debounce";
+import { EditorState } from "@codemirror/state";
 
 import { Editor } from "./Editor.js";
-import { exportAST, loadDocument, saveDocument } from "./index.js";
-import { PtDocument } from "./types.js";
 
-function getInitialValue(): PtDocument {
-	const data = localStorage.getItem("prototypical:content");
-	if (data !== null) {
-		return loadDocument(data);
-	}
-
-	return {
-		content: [
-			{
-				type: "paragraph",
-				children: [{ text: "A line of text in a paragraph." }],
-			},
-		],
-	};
+function getInitialValue(): string {
+	const data = localStorage.getItem("snowpost:content");
+	return data ?? `A line of text in a paragraph.\n`;
 }
 
 export interface AppProps {
@@ -30,26 +16,26 @@ export interface AppProps {
 }
 
 export const App: React.FC<AppProps> = ({ session }) => {
-	const contentRef = useRef<Descendant[] | null>(null);
-	const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
-	useEffect(() => {
-		const doc = getInitialValue();
-		setInitialValue(doc.content);
-		contentRef.current = doc.content;
-	}, []);
-
-	const handleContentChange = useCallback((content: Descendant[]) => {
-		contentRef.current = content;
-		save();
-	}, []);
+	const contentRef = useRef<EditorState | null>(null);
+	const [initialValue, setInitialValue] = useState<string | null>(null);
+	useEffect(() => setInitialValue(getInitialValue()), []);
 
 	const save = useDebouncedCallback(() => {
-		if (typeof window !== "undefined") {
-			console.log(exportAST(contentRef.current ?? []));
-			const data = saveDocument({ content: contentRef.current ?? [] });
-			localStorage.setItem("prototypical:content", data);
+		if (typeof window !== "undefined" && contentRef.current !== null) {
+			// console.log("saving editor state", contentRef.current?.doc.toString());
+			// console.log(exportAST(contentRef.current ?? []));
+			// const data = saveDocument({ content: contentRef.current ?? [] });
+			localStorage.setItem(
+				"snowpost:content",
+				contentRef.current.doc.toString(),
+			);
 		}
 	}, 1000);
+
+	const handleContentChange = useCallback((state: EditorState) => {
+		contentRef.current = state;
+		save();
+	}, []);
 
 	useEffect(() => {
 		const onBeforeUnload = () => save.flush();
@@ -62,31 +48,30 @@ export const App: React.FC<AppProps> = ({ session }) => {
 			return;
 		}
 
-		console.log("I should post", session, contentRef.current);
-		const content = exportAST(contentRef.current);
 		try {
 			const res = await fetch(`/api/post`, {
 				method: "POST",
-				body: JSON.stringify(content),
+				body: contentRef.current.doc.toString(),
+				headers: { "content-type": "text/markdown" },
 			});
 
-			if (!res.ok) {
+			if (res.ok) {
+				localStorage.removeItem("snowpost:content");
+				const location = res.headers.get("Location");
+				if (location !== null) {
+					window.location.href = location;
+				}
+			} else {
 				const msg = await res.text();
 				throw new Error(`${res.status} ${res.statusText}: ${msg}`);
 			}
-
-			console.log("yay posted", res.headers);
-			const location = res.headers.get("Location");
-			if (location !== null) {
-				window.location.href = location;
-			}
 		} catch (err) {
-			console.error(err);
+			alert(err);
 		}
 	}, []);
 
 	return (
-		<div className="p-2">
+		<div className="my-8">
 			<section className="my-4 mx-auto max-w-3xl flex flex-col gap-2">
 				{initialValue && (
 					<Editor initialValue={initialValue} onChange={handleContentChange} />

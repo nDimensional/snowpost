@@ -15,8 +15,6 @@ export const Page: React.FC<{
 					<span className="text-stone-400">∣</span>
 					<a href="/directory">directory</a>
 					<span className="text-stone-400">∣</span>
-					<a href="/about">about</a>
-					<span className="text-stone-400">∣</span>
 					{/*<button className="cursor-pointer underline">sign in</button>*/}
 					{props.session === null ? (
 						<a className="cursor-pointer underline" href="/login">

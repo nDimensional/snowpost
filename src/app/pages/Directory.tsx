@@ -6,12 +6,21 @@ import { Page } from "@/app/pages/Page";
 async function getUserList(): Promise<
 	{ did: string; handle: string | null }[]
 > {
-	const result = await env.DB.prepare(
-		"SELECT DISTINCT did, handle FROM posts;",
-	).all<{
+	const sql = `
+		SELECT did, handle
+      FROM (
+        SELECT did, handle,
+          ROW_NUMBER() OVER (PARTITION BY did ORDER BY id DESC) as rn
+        FROM posts
+      )
+      WHERE rn = 1;
+  `;
+
+	const result = await env.DB.prepare(sql).all<{
 		did: string;
 		handle: string | null;
 	}>();
+
 	return result.results;
 }
 

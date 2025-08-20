@@ -6,7 +6,7 @@ export const bareHandlePattern = /^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
 const B32_CHARS = "234567abcdefghijklmnopqrstuvwxyz";
 
-export function getClock(): [clock: string, date: Date] {
+export function getClock(): string {
 	const now = new Date();
 	// js only gives us millisecond precision, so we'll randomise the last 3 microsecond digits
 	const unix_micros = Math.floor((now.getTime() + Math.random()) * 1000);
@@ -15,5 +15,25 @@ export function getClock(): [clock: string, date: Date] {
 		// js bitshifts truncate to 32 bits because js is an amazing language, so we use Math instead
 		tid += B32_CHARS[Math.floor(unix_micros * Math.pow(0.5, 50 - i * 5)) % 32];
 	}
-	return [tid, now];
+	return tid;
+}
+
+export function parseClock(tid: string): Date {
+	if (tid.length !== 11) {
+		throw new Error("Invalid TID length: expected 11 characters");
+	}
+
+	let unix_micros = 0;
+	for (let i = 0; i < 11; i++) {
+		const char = tid[i];
+		const charIndex = B32_CHARS.indexOf(char);
+		if (charIndex === -1) {
+			throw new Error(`Invalid character in TID: ${char}`);
+		}
+		// Reverse the encoding: multiply by 2^(50-i*5) and add to result
+		unix_micros += charIndex * Math.pow(2, 50 - i * 5);
+	}
+
+	// Convert microseconds back to milliseconds for Date constructor
+	return new Date(unix_micros / 1000);
 }

@@ -12,5 +12,7 @@ declare module "slate" {
 	}
 }
 
-export * from "./load.js";
-export * from "./save.js";
+// export * from "./types.js";
+// export * from "./load.js";
+// export * from "./save.js";
+// export * from "./Editor.js";
