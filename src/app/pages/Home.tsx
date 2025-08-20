@@ -2,9 +2,19 @@ import { RequestInfo } from "rwsdk/worker";
 
 import { Page } from "@/app/pages/Page";
 
+const blizzardHeader = `
+❆                          ❅                            ❄     ❆                          ❅
+          ❄         ❆                   ❅                               ❄         ❆                   ❅
+                          ❄                     ❆                                 ❄                     ❆
+    ❅                                      ❄        ❅             ❆
+`.trim();
+
 export async function Home({ ctx }: RequestInfo) {
 	return (
 		<Page session={ctx.session}>
+			<div className="whitespace-pre overflow-clip tracking-widest my-12">
+				{blizzardHeader}
+			</div>
 			<div className="content mt-16 mb-12 max-w-md">
 				<p>Hello world!</p>
 				<p>Snowpost is a simple, minimalist writing platform.</p>
@@ -18,9 +28,6 @@ export async function Home({ ctx }: RequestInfo) {
 					Read more about Snowpost <a href="/about">here</a>, browse the{" "}
 					<a href="/directory">directory</a> of posts, or get started{" "}
 					<a href="/write">writing a new post</a>.
-				</p>
-				<p className="">
-					❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❆ ❅ ❄ ❅ ❆ ❅ ❄ ❅ ❆
 				</p>
 			</div>
 		</Page>
