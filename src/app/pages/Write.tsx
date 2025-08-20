@@ -1,7 +1,12 @@
 import { RequestInfo } from "rwsdk/worker";
 
+import { Page } from "@/app/pages/Page";
 import { App } from "@/app/editor/App";
 
 export function Write({ ctx }: RequestInfo) {
-	return <App session={ctx.session} />;
+	return (
+		<Page session={ctx.session}>
+			<App session={ctx.session} />;
+		</Page>
+	);
 }

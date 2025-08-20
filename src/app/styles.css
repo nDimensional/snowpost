@@ -75,9 +75,7 @@ a {
 	text-decoration: underline;
 }
 
-#home {
-	/*font-size: 20px;
-	vertical-align: text-top;*/
+a.icon {
 	text-decoration: none;
 	user-select: none;
 }

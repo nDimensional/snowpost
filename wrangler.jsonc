@@ -50,14 +50,6 @@
 		{
 			"binding": "HANDLE_CACHE",
 			"id": "814c6c31313c4dc6a6d34627d827bf94"
-		},
-		{
-			"binding": "DID_TO_HANDLE",
-			"id": "f11b5fd9874b4d2489d969f201e89b86"
-		},
-		{
-			"binding": "HANDLE_TO_DID",
-			"id": "feea158f8d12422cb42f5dd9f3cdafc3"
 		}
 	]
 }

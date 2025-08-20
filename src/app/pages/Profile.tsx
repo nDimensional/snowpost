@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 
+import { Page } from "@/app/pages/Page";
 import { client } from "@/app/oauth/oauth-client";
 
 async function getPostList(
@@ -17,6 +18,7 @@ async function getPostList(
 }
 
 export async function Profile({
+	ctx,
 	params: { user },
 }: RequestInfo<{ user: string }>) {
 	let identity: IdentityInfo;
@@ -33,7 +35,7 @@ export async function Profile({
 		identity.handle === "handle.invalid" ? identity.did : identity.handle;
 
 	return (
-		<div>
+		<Page session={ctx.session}>
 			<div className="flex flex-row gap-2 py-2">
 				<ul className="flex flex-col ">
 					<li className="inline-flex gap-1">
@@ -52,6 +54,6 @@ export async function Profile({
 					})}
 				</ul>
 			</div>
-		</div>
+		</Page>
 	);
 }

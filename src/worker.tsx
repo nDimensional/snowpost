@@ -22,7 +22,7 @@ import {
 } from "rwsdk/auth";
 
 export type AppContext = {
-	session: { did: string } | null;
+	session: { did: string; handle: string | null } | null;
 };
 
 const cookieName = "session_id";
@@ -129,17 +129,9 @@ export default defineApp([
 			return;
 		}
 
-		ctx.session = JSON.parse(value);
-	},
+		const { did } = JSON.parse(value);
 
-	route("/api/post", async ({ ctx, request }) => {
-		if (ctx.session === undefined || ctx.session === null) {
-			throw new ErrorResponse(401, "Unauthorized");
-		}
-
-		const { did } = ctx.session;
-
-		let handle = null;
+		let handle: string | null = null;
 		try {
 			const identity = await client.identityResolver.resolve(did);
 			if (identity.handle !== "handle.invalid") {
@@ -147,8 +139,17 @@ export default defineApp([
 			}
 		} catch (err) {
 			console.error(err);
-			throw new ErrorResponse(400, "Failed to resolve identity");
 		}
+
+		ctx.session = { did, handle };
+	},
+
+	route("/api/post", async ({ ctx, request }) => {
+		if (ctx.session === undefined || ctx.session === null) {
+			throw new ErrorResponse(401, "Unauthorized");
+		}
+
+		const { did, handle } = ctx.session;
 
 		let root: {};
 		try {
@@ -178,13 +179,25 @@ export default defineApp([
 		const user = handle ?? did;
 		return new Response(null, {
 			status: 201,
-			headers: { Location: `/${user}/${clock}` },
+			headers: {
+				Location: `/${user}/${clock}`,
+			},
+		});
+	}),
+
+	route("/logout", () => {
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: "/",
+				"Set-Cookie":
+					"token=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+			},
 		});
 	}),
 
 	render(Document, [
 		route("/", Home),
-		route("/favicon.ico", () => new Response(null, { status: 404 })),
 		route("/about", About),
 		route("/login", Login),
 		route("/write", Write),

@@ -1,5 +1,6 @@
 import { RequestInfo } from "rwsdk/worker";
 
+import { Page } from "@/app/pages/Page";
 import { client } from "@/app/oauth/oauth-client";
 
 export async function Home({ ctx, request }: RequestInfo) {
@@ -18,12 +19,14 @@ export async function Home({ ctx, request }: RequestInfo) {
 	}
 
 	return (
-		<div className="content">
-			<p>hello world</p>
-			<p>
-				<a href="/directory">directory</a>
-			</p>
-			{user && <p>you are logged in as {user}</p>}
-		</div>
+		<Page session={ctx.session}>
+			<div className="content">
+				<p>hello world</p>
+				<p>
+					<a href="/directory">directory</a>
+				</p>
+				{user && <p>you are logged in as {user}</p>}
+			</div>
+		</Page>
 	);
 }

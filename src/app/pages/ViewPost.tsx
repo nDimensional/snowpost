@@ -4,6 +4,7 @@ import { env } from "cloudflare:workers";
 
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 
+import { Page } from "@/app/pages/Page";
 import { renderPost } from "@/app/shared/renderPost";
 import { client } from "@/app/oauth/oauth-client";
 
@@ -41,19 +42,21 @@ export async function ViewPost({
 
 	try {
 		return (
-			<div>
-				<div className="inline-flex flex-row gap-2 py-2">
+			<Page session={ctx.session}>
+				<div className="flex flex-row gap-2 py-2">
 					<a href={`/${handle}`}>{handle}</a>
 					<span className="text-stone-400">‧</span>
 					<span>{date}</span>
-					{identity.did === ctx.session?.did && (
+					{
 						<span className="flex-1 inline-flex justify-end">
-							<a href={`/${user}/${slug}/edit`}>edit</a>
+							<a className="icon" href={`/${user}/${slug}/edit`}>
+								✎
+							</a>
 						</span>
-					)}
+					}
 				</div>
 				<div className="content">{renderPost(post.root)}</div>
-			</div>
+			</Page>
 		);
 	} catch (err) {
 		throw new ErrorResponse(500, `Error rendering post - ${err}`);

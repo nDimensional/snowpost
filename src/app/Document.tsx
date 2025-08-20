@@ -1,4 +1,3 @@
-import { Header } from "./Header";
 import styles from "./styles.css?url";
 
 export const Document: React.FC<{ children: React.ReactNode }> = ({
@@ -15,18 +14,18 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>
-			<div id="root" className="py-8 mx-auto flex flex-col">
-				{/*<Header title={<span className="text-2xl">❅</span>} />*/}
+			{children}
+			{/*<div id="root" className="py-8 mx-auto flex flex-col">
 				<Header
 					title={
-						<a href="/" id="home">
+						<a href="/" className="icon">
 							❅
 						</a>
 					}
 				/>
 				<main className="flex-1">{children}</main>
-				{/*<footer className="min-h-8 border-t-4 border-stone-300 mx-6"></footer>*/}
-			</div>
+				<footer className="min-h-8 border-t-4 border-stone-300 mx-6"></footer>
+			</div>*/}
 		</body>
 	</html>
 );
