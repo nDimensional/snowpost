@@ -6,7 +6,7 @@ export interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ title }) => {
 	return (
-		<header className="py-3 px-6 bg-stone-300 flex flex-row justify-between items-center text-sm">
+		<header className="py-3 px-5 bg-stone-300 flex flex-row justify-between items-center text-sm">
 			<span>{title}</span>
 			<span className="inline-flex gap-2">
 				<a href="/write">write</a>
