@@ -20,7 +20,7 @@ export async function Directory({ ctx }: RequestInfo<{}>) {
 
 	return (
 		<Page session={ctx.session}>
-			<div className="flex flex-row gap-2 py-2">
+			<div className="flex flex-row gap-2 my-8">
 				<ul>
 					{userList.map(({ did, handle }) => {
 						const user = handle ?? did;

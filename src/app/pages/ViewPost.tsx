@@ -16,8 +16,6 @@ async function getPost(
 	const key = `${identity.did}/${slug}/post.json`;
 	const object = await env.R2.get(key);
 	if (object === null) {
-		const user =
-			identity.handle === "handle.invalid" ? identity.handle : identity.did;
 		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
 	}
 
@@ -43,18 +41,20 @@ export async function ViewPost({
 	try {
 		return (
 			<Page session={ctx.session}>
-				<div className="flex flex-row gap-2 py-2">
-					<a href={`/${handle}`}>{handle}</a>
-					<span className="text-stone-400">‧</span>
-					<span>{date}</span>
-					{
-						<span className="flex-1 inline-flex justify-end">
-							<a className="icon" href={`/${user}/${slug}/edit`}>
-								✎
-							</a>
+				<nav className="flex flex-row py-2 justify-between">
+					<span className="flex flex-row gap-1">
+						<a href={`/${handle}`}>{handle}</a>
+						<span className="text-stone-400">‧</span>
+						<span>
+							<span>{date}</span>
 						</span>
-					}
-				</div>
+					</span>
+					<span>
+						<span className="flex-1 inline-flex justify-end">
+							<a href={`/${user}/${slug}/edit`}>edit</a>
+						</span>
+					</span>
+				</nav>
 				<div className="content">{renderPost(post.root)}</div>
 			</Page>
 		);

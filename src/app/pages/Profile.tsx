@@ -36,7 +36,7 @@ export async function Profile({
 
 	return (
 		<Page session={ctx.session}>
-			<div className="flex flex-row gap-2 py-2">
+			<div className="flex flex-row gap-2 my-8">
 				<ul className="flex flex-col ">
 					<li className="inline-flex gap-1">
 						<a href={`/${handle}`}>{handle}</a>
