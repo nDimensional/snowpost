@@ -110,6 +110,7 @@ export default defineApp([
 	}),
 
 	async ({ ctx, request }) => {
+		ctx.session = null;
 		const sessionId = getSessionIdFromCookie(request);
 		if (!sessionId) {
 			return;

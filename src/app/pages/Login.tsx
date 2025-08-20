@@ -5,7 +5,7 @@ import { Page } from "@/app/pages/Page";
 export function Login({ ctx, request }: RequestInfo) {
 	return (
 		<Page session={ctx.session}>
-			<div className="content my-16 flex justify-center">
+			<div className="content flex justify-center mt-16 mb-12">
 				<form
 					className="flex flex-col align-end"
 					method="get"

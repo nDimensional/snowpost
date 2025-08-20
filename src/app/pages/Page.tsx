@@ -5,13 +5,15 @@ export const Page: React.FC<{
 	return (
 		<div id="root" className="py-8 mx-auto flex flex-col">
 			<header className="py-3 bg-stone-300 flex flex-row justify-between items-center">
-				<span>
+				<span className="inline-flex gap-2">
 					<a href="/" className="icon">
-						❅
+						<img src="/icon-96x96.png" width={24} height={24} />
 					</a>
 				</span>
 				<span className="inline-flex gap-2">
 					<a href="/write">write</a>
+					<span className="text-stone-400">∣</span>
+					<a href="/directory">directory</a>
 					<span className="text-stone-400">∣</span>
 					<a href="/about">about</a>
 					<span className="text-stone-400">∣</span>

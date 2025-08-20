@@ -20,12 +20,13 @@ export async function Directory({ ctx }: RequestInfo<{}>) {
 
 	return (
 		<Page session={ctx.session}>
-			<div className="flex flex-row gap-2 my-8">
+			<div className="flex flex-row gap-2 mt-16 mb-12">
 				<ul>
 					{userList.map(({ did, handle }) => {
 						const user = handle ?? did;
 						return (
-							<li key={did}>
+							<li className="flex flex-row gap-1" key={did}>
+								<span className="text-stone-400">/</span>
 								<a href={`/${user}`}>{user}</a>
 							</li>
 						);

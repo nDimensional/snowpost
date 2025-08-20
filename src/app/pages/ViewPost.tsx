@@ -41,7 +41,7 @@ export async function ViewPost({
 	try {
 		return (
 			<Page session={ctx.session}>
-				<nav className="flex flex-row py-2 justify-between">
+				<nav className="flex flex-row py-2 justify-between mb-12">
 					<span className="flex flex-row gap-1">
 						<a href={`/${handle}`}>{handle}</a>
 						<span className="text-stone-400">‧</span>
@@ -49,11 +49,13 @@ export async function ViewPost({
 							<span>{date}</span>
 						</span>
 					</span>
-					<span>
-						<span className="flex-1 inline-flex justify-end">
-							<a href={`/${user}/${slug}/edit`}>edit</a>
+					{ctx.session?.did === identity.did && (
+						<span>
+							<span className="flex-1 inline-flex justify-end">
+								<a href={`/${user}/${slug}/edit`}>edit</a>
+							</span>
 						</span>
-					</span>
+					)}
 				</nav>
 				<div className="content">{renderPost(post.root)}</div>
 			</Page>
