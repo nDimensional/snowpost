@@ -3,7 +3,7 @@ export const Page: React.FC<{
 	children: React.ReactNode;
 }> = (props) => {
 	return (
-		<div id="root" className="py-8 mx-auto flex flex-col">
+		<div id="root" className="mx-auto flex flex-col">
 			<header className="py-3 bg-stone-300 flex flex-row justify-between items-center">
 				<span className="inline-flex gap-2">
 					<a href="/" className="icon">

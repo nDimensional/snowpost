@@ -47,7 +47,7 @@ body {
 #root {
 	padding-top: 32px;
 	padding-bottom: 32px;
-	max-width: var(--container-2xl);
+	max-width: 720px;
 	min-height: 100svh;
 }
 
@@ -65,7 +65,7 @@ body {
 	font-size: 16px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 752px) {
 	#root {
 		padding: 0;
 		max-width: none;
