@@ -1,0 +1,37 @@
+{
+	"lexicon": 1,
+	"id": "st.snowpo.post",
+	"defs": {
+		"main": {
+			"type": "record",
+			"description": "Record linking to a Markdown file.",
+			"key": "tid",
+			"record": {
+				"type": "object",
+				"required": ["content", "createdAt"],
+				"properties": {
+					"content": {
+						"type": "blob",
+						"accept": ["text/markdown"],
+						"maxSize": 1000000
+					},
+					"previewText": {
+						"type": "string",
+						"format": "datetime",
+						"description": "Display title"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "datetime",
+						"description": "Client-declared timestamp when this post was originally created."
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "datetime",
+						"description": "Client-declared timestamp when this post was last updated."
+					}
+				}
+			}
+		}
+	}
+}

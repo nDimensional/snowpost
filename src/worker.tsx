@@ -6,7 +6,7 @@ import { env } from "cloudflare:workers";
 
 import type { OAuthSession } from "atproto-oauth-client-cloudflare-workers/oauth-client";
 
-import { Agent } from "@atproto/api";
+import { Agent, BlobRef } from "@atproto/api";
 
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
@@ -157,52 +157,78 @@ export default defineApp([
 
 		const { did, handle } = ctx.session;
 
-		const contentType = request.headers.get("content-type");
+		const contentType = request.headers.get("Content-Type");
 		if (contentType !== "text/markdown") {
 			throw new ErrorResponse(415, "Unsupported Media Type");
 		}
 
-		const md = await request.text();
+		const md = await request.bytes();
 		const xhtml = micromark(md);
 
-		const clock = getClock();
+		const date = new Date(Date.now());
+		const tid = getClock(date);
 
 		let oauthSession: OAuthSession;
 		try {
 			oauthSession = await client.restore(did);
 		} catch (err) {
-			//
+			throw new ErrorResponse(401, "Unauthorized");
 		}
-
-		// Note: If the current access_token is expired, the session will automatically
-		// (and transparently) refresh it. The new token set will be saved though
-		// the client's session store.
 
 		const agent = new Agent(oauthSession);
 		if (agent.did === undefined) {
 			throw new ErrorResponse(401, "Unauthorized");
 		}
 
-		// Make Authenticated API calls
-		const profile = await agent.getProfile({ actor: did });
-		console.log("Bsky profile:", profile.data);
+		let blob: BlobRef;
+		try {
+			const uploadBlobResponse = await agent.uploadBlob(md, {
+				signal: request.signal,
+				headers: { "Content-Type": "text/markdown" },
+			});
 
-		// agent.
+			if (!uploadBlobResponse.success) {
+				throw new Error("post failed");
+			}
 
-		// try {
-		// 	const stmt = env.DB.prepare(
-		// 		"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
-		// 	).bind(did, handle, clock);
-		// 	await stmt.run();
-		// } catch (err) {
-		// 	throw new ErrorResponse(500, `Failed to publish post: ${err}`);
-		// }
+			blob = uploadBlobResponse.data.blob;
+		} catch (err) {
+			throw new ErrorResponse(502, `Failed to upload blob: ${err}`);
+		}
+
+		try {
+			const createRecordResponse = await agent.com.atproto.repo.createRecord({
+				repo: did,
+				collection: "st.snowpo.post",
+				rkey: tid,
+				record: {
+					$type: "st.snowpo.post",
+					content: blob.ipld(),
+					createdAt: date.toISOString(),
+				},
+			});
+
+			if (!createRecordResponse.success) {
+				throw new Error("post failed");
+			}
+		} catch (err) {
+			throw new ErrorResponse(502, `Failed to create record: ${err}`);
+		}
+
+		try {
+			const stmt = env.DB.prepare(
+				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
+			).bind(did, handle, tid);
+			await stmt.run();
+		} catch (err) {
+			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
+		}
 
 		await Promise.all([
 			// env.R2.put(`${did}/${clock}/content.md`, md, {
 			// 	httpMetadata: { contentType: "text/markdown" },
 			// }),
-			env.R2.put(`${did}/${clock}/content.xhtml`, xhtml, {
+			env.R2.put(`${did}/${tid}/content.xhtml`, xhtml, {
 				httpMetadata: { contentType: "application/xhtml+xml" },
 			}),
 		]);
@@ -210,7 +236,7 @@ export default defineApp([
 		const user = handle ?? did;
 		return new Response(null, {
 			status: 201,
-			headers: { Location: `/${user}/${clock}` },
+			headers: { Location: `/${user}/${tid}` },
 		});
 	}),
 

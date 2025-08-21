@@ -6,10 +6,9 @@ export const bareHandlePattern = /^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
 const B32_CHARS = "234567abcdefghijklmnopqrstuvwxyz";
 
-export function getClock(): string {
-	const now = new Date();
+export function getClock(date: Date): string {
 	// js only gives us millisecond precision, so we'll randomise the last 3 microsecond digits
-	const unix_micros = Math.floor((now.getTime() + Math.random()) * 1000);
+	const unix_micros = Math.floor((date.getTime() + Math.random()) * 1000);
 	let tid = "";
 	for (var i = 0; i < 11; i++) {
 		// js bitshifts truncate to 32 bits because js is an amazing language, so we use Math instead
