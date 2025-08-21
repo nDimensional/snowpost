@@ -3,22 +3,21 @@ import { JoseKey } from "@atproto/jwk-jose";
 import { env } from "cloudflare:workers";
 
 import {
-	NodeOAuthClient,
-	NodeSavedState,
-	NodeSavedSession,
+	WorkersOAuthClient,
+	WorkersSavedState,
+	WorkersSavedSession,
+	DidCacheKV,
+	HandleCacheKV,
 } from "atproto-oauth-client-cloudflare-workers";
-
-import { didCache } from "@/app/oauth/did-cache";
-import { handleCache } from "@/app/oauth/handle-cache";
 
 const host = "https://snowpost.ndim.workers.dev";
 
 const parseKey = (value: string) =>
 	JSON.parse(Buffer.from(value, "base64").toString("utf8"));
 
-export const client = new NodeOAuthClient({
-	didCache: didCache,
-	handleCache: handleCache,
+export const client = new WorkersOAuthClient({
+	didCache: new DidCacheKV(env.DID_CACHE),
+	handleCache: new HandleCacheKV(env.HANDLE_CACHE, {}),
 
 	clientMetadata: {
 		client_id: `${host}/oauth/client-metadata.json`,
@@ -48,10 +47,10 @@ export const client = new NodeOAuthClient({
 
 	// Interface to store authorization state data (during authorization flows)
 	stateStore: {
-		async set(key: string, internalState: NodeSavedState): Promise<void> {
+		async set(key: string, internalState: WorkersSavedState): Promise<void> {
 			await env.OAUTH_STATE_STORE.put(key, JSON.stringify(internalState));
 		},
-		async get(key: string): Promise<NodeSavedState | undefined> {
+		async get(key: string): Promise<WorkersSavedState | undefined> {
 			const value = await env.OAUTH_STATE_STORE.get(key);
 			if (value === null) {
 				return undefined;
@@ -66,10 +65,10 @@ export const client = new NodeOAuthClient({
 
 	// Interface to store authenticated session data
 	sessionStore: {
-		async set(sub: string, session: NodeSavedSession): Promise<void> {
+		async set(sub: string, session: WorkersSavedSession): Promise<void> {
 			await env.OAUTH_SESSION_STORE.put(sub, JSON.stringify(session));
 		},
-		async get(sub: string): Promise<NodeSavedSession | undefined> {
+		async get(sub: string): Promise<WorkersSavedSession | undefined> {
 			const value = await env.OAUTH_SESSION_STORE.get(sub);
 			if (value === null) {
 				return undefined;

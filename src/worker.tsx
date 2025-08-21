@@ -4,6 +4,10 @@ import { render, route } from "rwsdk/router";
 import { micromark } from "micromark";
 import { env } from "cloudflare:workers";
 
+import type { OAuthSession } from "atproto-oauth-client-cloudflare-workers/oauth-client";
+
+import { Agent } from "@atproto/api";
+
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
@@ -163,14 +167,36 @@ export default defineApp([
 
 		const clock = getClock();
 
+		let oauthSession: OAuthSession;
 		try {
-			const stmt = env.DB.prepare(
-				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
-			).bind(did, handle, clock);
-			await stmt.run();
+			oauthSession = await client.restore(did);
 		} catch (err) {
-			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
+			//
 		}
+
+		// Note: If the current access_token is expired, the session will automatically
+		// (and transparently) refresh it. The new token set will be saved though
+		// the client's session store.
+
+		const agent = new Agent(oauthSession);
+		if (agent.did === undefined) {
+			throw new ErrorResponse(401, "Unauthorized");
+		}
+
+		// Make Authenticated API calls
+		const profile = await agent.getProfile({ actor: did });
+		console.log("Bsky profile:", profile.data);
+
+		// agent.
+
+		// try {
+		// 	const stmt = env.DB.prepare(
+		// 		"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
+		// 	).bind(did, handle, clock);
+		// 	await stmt.run();
+		// } catch (err) {
+		// 	throw new ErrorResponse(500, `Failed to publish post: ${err}`);
+		// }
 
 		await Promise.all([
 			// env.R2.put(`${did}/${clock}/content.md`, md, {
