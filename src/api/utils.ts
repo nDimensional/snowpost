@@ -57,7 +57,7 @@ export async function writePostContent(
 	}
 
 	try {
-		const createRecordResponse = await agent.com.atproto.repo.putRecord({
+		const putRecordResponse = await agent.com.atproto.repo.putRecord({
 			repo: did,
 			collection: "st.snowpo.post",
 			rkey: rkey,
@@ -69,7 +69,7 @@ export async function writePostContent(
 			},
 		});
 
-		if (!createRecordResponse.success) {
+		if (!putRecordResponse.success) {
 			throw new Error("post failed");
 		}
 	} catch (err) {
