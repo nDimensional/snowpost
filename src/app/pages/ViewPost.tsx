@@ -4,19 +4,19 @@ import { env } from "cloudflare:workers";
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 
 import { Page } from "@/app/pages/Page";
-import { renderPost } from "@/app/shared/renderPost";
 import { client } from "@/app/oauth/oauth-client";
-import { parseClock } from "@/app/shared/utils";
+import { parseTID, tidPattern } from "@/app/shared/utils";
+import { updatePost } from "@/api/updatePost";
+import { deletePost } from "@/api/deletePost";
 
-async function getPost(
-	user: string,
-	slug: string,
+async function getPostContent(
 	identity: IdentityInfo,
-): Promise<string> {
+	slug: string,
+): Promise<string | null> {
 	const key = `${identity.did}/${slug}/content.xhtml`;
 	const object = await env.R2.get(key);
 	if (object === null) {
-		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
+		return null;
 	}
 
 	return await object.text();
@@ -25,7 +25,13 @@ async function getPost(
 export async function ViewPost({
 	ctx,
 	params: { user, slug },
+	request,
+	response,
 }: RequestInfo<{ user: string; slug: string }>) {
+	if (!tidPattern.test(slug)) {
+		throw new ErrorResponse(404, "Not found");
+	}
+
 	let identity: IdentityInfo;
 	try {
 		identity = await client.identityResolver.resolve(user);
@@ -33,10 +39,36 @@ export async function ViewPost({
 		throw new ErrorResponse(404, `Failed to resolve user ${user}`);
 	}
 
-	const post = await getPost(user, slug, identity);
+	if (request.method === "PUT") {
+		if (ctx.session === null) {
+			throw new ErrorResponse(401, "Unauthorized");
+		} else if (ctx.session.did !== identity.did) {
+			throw new ErrorResponse(403, "Forbidden");
+		}
+
+		return await updatePost(ctx.session, request, slug);
+	} else if (request.method === "DELETE") {
+		if (ctx.session === null) {
+			throw new ErrorResponse(401, "Unauthorized");
+		} else if (ctx.session.did !== identity.did) {
+			throw new ErrorResponse(403, "Forbidden");
+		}
+
+		return await deletePost(ctx.session, request, slug);
+	} else if (request.method !== "GET") {
+		throw new ErrorResponse(405, "Method Not Allowed");
+	}
+
+	const content = await getPostContent(identity, slug);
+	if (content === null) {
+		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
+	}
+
+	// response.headers = new Headers({ ...response.headers });
+	// response.headers.set("Cache-Control", "public, max-age=7200");
 
 	const handle = identity.handle ?? identity.did;
-	const date = parseClock(slug).toLocaleDateString();
+	const date = parseTID(slug);
 
 	return (
 		<Page session={ctx.session}>
@@ -45,11 +77,11 @@ export async function ViewPost({
 					<a href={`/${handle}`}>{handle}</a>
 					<span className="text-stone-400">‧</span>
 					<span>
-						<span>{date}</span>
+						<span>{date.toLocaleDateString()}</span>
 					</span>
 				</span>
 				{ctx.session?.did === identity.did && (
-					<span>
+					<span className="inline-flex gap-2">
 						<span className="flex-1 inline-flex justify-end">
 							<a href={`/${user}/${slug}/edit`}>edit</a>
 						</span>
@@ -58,7 +90,7 @@ export async function ViewPost({
 			</nav>
 			<div
 				className="content my-12"
-				dangerouslySetInnerHTML={{ __html: post }}
+				dangerouslySetInnerHTML={{ __html: content }}
 			/>
 		</Page>
 	);

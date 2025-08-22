@@ -4,9 +4,11 @@ export const handlePattern =
 
 export const bareHandlePattern = /^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
+export const tidPattern = /^[234567abcdefghijklmnopqrstuvwxyz]{11}$/;
+
 const B32_CHARS = "234567abcdefghijklmnopqrstuvwxyz";
 
-export function getClock(date: Date): string {
+export function getTID(date: Date): string {
 	// js only gives us millisecond precision, so we'll randomise the last 3 microsecond digits
 	const unix_micros = Math.floor((date.getTime() + Math.random()) * 1000);
 	let tid = "";
@@ -17,7 +19,7 @@ export function getClock(date: Date): string {
 	return tid;
 }
 
-export function parseClock(tid: string): Date {
+export function parseTID(tid: string): Date {
 	if (tid.length !== 11) {
 		throw new Error("Invalid TID length: expected 11 characters");
 	}

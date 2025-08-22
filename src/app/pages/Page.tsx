@@ -13,11 +13,12 @@ export const Page: React.FC<{
 				<span className="inline-flex gap-2">
 					<a href="/write">write</a>
 					<span className="text-stone-400">∣</span>
-					<a href="/directory">directory</a>
+					<a href="/recent">recent</a>
 					<span className="text-stone-400">∣</span>
 					<a href="/about">about</a>
 					<span className="text-stone-400">∣</span>
 					{/*<button className="cursor-pointer underline">sign in</button>*/}
+					{/*<a href="/profile">profile</a>*/}
 					{props.session === null ? (
 						<a className="cursor-pointer underline" href="/login">
 							sign in

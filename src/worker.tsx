@@ -1,24 +1,20 @@
 import { defineApp, ErrorResponse } from "rwsdk/worker";
 import { render, route } from "rwsdk/router";
 
-import { micromark } from "micromark";
 import { env } from "cloudflare:workers";
-
-import type { OAuthSession } from "atproto-oauth-client-cloudflare-workers/oauth-client";
-
-import { Agent, BlobRef } from "@atproto/api";
 
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
-import { Directory } from "@/app/pages/Directory";
+import { Recent } from "@/app/pages/Recent";
 import { Profile } from "@/app/pages/Profile";
 import { ViewPost } from "@/app/pages/ViewPost";
+import { EditPost } from "@/app/pages/EditPost";
 import { client } from "@/app/oauth/oauth-client";
 
-import { bareHandlePattern, getClock, handlePattern } from "@/app/shared/utils";
+import { bareHandlePattern, handlePattern } from "@/app/shared/utils";
 import {
 	createSessionCookie,
 	generateSessionId,
@@ -117,7 +113,7 @@ export default defineApp([
 	async ({ ctx, request }) => {
 		ctx.session = null;
 		const sessionId = getSessionIdFromCookie(request);
-		if (!sessionId) {
+		if (sessionId === null) {
 			return;
 		}
 
@@ -150,97 +146,16 @@ export default defineApp([
 		ctx.session = { did, handle };
 	},
 
-	route("/api/post", async ({ ctx, request }) => {
-		if (ctx.session === undefined || ctx.session === null) {
-			throw new ErrorResponse(401, "Unauthorized");
+	route("/logout", async ({ request, ctx }) => {
+		const sessionId = getSessionIdFromCookie(request);
+		if (sessionId !== null) {
+			await env.WEB_SESSION_STORE.delete(sessionId);
 		}
 
-		const { did, handle } = ctx.session;
-
-		const contentType = request.headers.get("Content-Type");
-		if (contentType !== "text/markdown") {
-			throw new ErrorResponse(415, "Unsupported Media Type");
+		if (ctx.session !== null) {
+			await client.revoke(ctx.session.did);
 		}
 
-		const md = await request.bytes();
-		const xhtml = micromark(md);
-
-		const date = new Date(Date.now());
-		const tid = getClock(date);
-
-		let oauthSession: OAuthSession;
-		try {
-			oauthSession = await client.restore(did);
-		} catch (err) {
-			throw new ErrorResponse(401, "Unauthorized");
-		}
-
-		const agent = new Agent(oauthSession);
-		if (agent.did === undefined) {
-			throw new ErrorResponse(401, "Unauthorized");
-		}
-
-		let blob: BlobRef;
-		try {
-			const uploadBlobResponse = await agent.uploadBlob(md, {
-				signal: request.signal,
-				headers: { "Content-Type": "text/markdown" },
-			});
-
-			if (!uploadBlobResponse.success) {
-				throw new Error("post failed");
-			}
-
-			blob = uploadBlobResponse.data.blob;
-		} catch (err) {
-			throw new ErrorResponse(502, `Failed to upload blob: ${err}`);
-		}
-
-		try {
-			const createRecordResponse = await agent.com.atproto.repo.createRecord({
-				repo: did,
-				collection: "st.snowpo.post",
-				rkey: tid,
-				record: {
-					$type: "st.snowpo.post",
-					content: blob.ipld(),
-					createdAt: date.toISOString(),
-				},
-			});
-
-			if (!createRecordResponse.success) {
-				throw new Error("post failed");
-			}
-		} catch (err) {
-			throw new ErrorResponse(502, `Failed to create record: ${err}`);
-		}
-
-		try {
-			const stmt = env.DB.prepare(
-				"INSERT INTO POSTS (did, handle, slug) VALUES (?, ?, ?)",
-			).bind(did, handle, tid);
-			await stmt.run();
-		} catch (err) {
-			throw new ErrorResponse(500, `Failed to publish post: ${err}`);
-		}
-
-		await Promise.all([
-			// env.R2.put(`${did}/${clock}/content.md`, md, {
-			// 	httpMetadata: { contentType: "text/markdown" },
-			// }),
-			env.R2.put(`${did}/${tid}/content.xhtml`, xhtml, {
-				httpMetadata: { contentType: "application/xhtml+xml" },
-			}),
-		]);
-
-		const user = handle ?? did;
-		return new Response(null, {
-			status: 201,
-			headers: { Location: `/${user}/${tid}` },
-		});
-	}),
-
-	route("/logout", () => {
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -250,20 +165,27 @@ export default defineApp([
 		});
 	}),
 
-	render(Document, [
-		route("/", Home),
-		route("/about", About),
-		route("/login", Login),
-		route("/write", Write),
-		route("/directory", Directory),
-		route("/:user", Profile),
-		route("/:user/:slug", ViewPost),
-	]),
+	render(
+		Document,
+		[
+			route("/", Home),
+			route("/about", About),
+			route("/login", Login),
+			route("/write", Write),
+			route("/recent", Recent),
+			route("/:user", Profile),
+			route("/:user/:slug", ViewPost),
+			route("/:user/:slug/edit", EditPost),
+		],
+		{ ssr: false },
+	),
 ]);
 
-const getSessionIdFromCookie = (request: Request): string | undefined => {
+const getSessionIdFromCookie = (request: Request): string | null => {
 	const cookieHeader = request.headers.get("Cookie");
-	if (!cookieHeader) return undefined;
+	if (cookieHeader === null) {
+		return null;
+	}
 
 	for (const cookie of cookieHeader.split(";")) {
 		const trimmedCookie = cookie.trim();
@@ -277,4 +199,6 @@ const getSessionIdFromCookie = (request: Request): string | undefined => {
 			return value;
 		}
 	}
+
+	return null;
 };

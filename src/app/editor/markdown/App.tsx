@@ -13,12 +13,21 @@ function getInitialValue(): string {
 
 export interface AppProps {
 	session: { did: string } | null;
+	tid?: string;
+	initialValue?: string;
 }
 
-export const App: React.FC<AppProps> = ({ session }) => {
+export const App: React.FC<AppProps> = (props) => {
 	const contentRef = useRef<EditorState | null>(null);
-	const [initialValue, setInitialValue] = useState<string | null>(null);
-	useEffect(() => setInitialValue(getInitialValue()), []);
+	const [initialValue, setInitialValue] = useState<string | null>(
+		props.initialValue ?? null,
+	);
+
+	useEffect(() => {
+		if (props.initialValue === undefined) {
+			setInitialValue(getInitialValue());
+		}
+	}, []);
 
 	const save = useDebouncedCallback(() => {
 		if (typeof window !== "undefined" && contentRef.current !== null) {
@@ -44,13 +53,18 @@ export const App: React.FC<AppProps> = ({ session }) => {
 	}, []);
 
 	const handlePost = useCallback(async () => {
-		if (session === null || contentRef.current === null) {
+		if (props.session === null || contentRef.current === null) {
 			return;
 		}
 
 		try {
-			const res = await fetch(`/api/post`, {
-				method: "POST",
+			const [method, url] =
+				props.tid === undefined
+					? ["POST", `/${props.session.did}`]
+					: ["PUT", `/${props.session.did}/${props.tid}`];
+
+			const res = await fetch(url, {
+				method: method,
 				body: contentRef.current.doc.toString(),
 				headers: { "content-type": "text/markdown" },
 			});
@@ -81,7 +95,7 @@ export const App: React.FC<AppProps> = ({ session }) => {
 			<hr className="my-2" />
 
 			<section className="flex justify-end">
-				{session === null ? (
+				{props.session === null ? (
 					<span>
 						<a href="/login">sign in</a> to post
 					</span>

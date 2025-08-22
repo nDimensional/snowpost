@@ -10,7 +10,7 @@ import {
 	HandleCacheKV,
 } from "atproto-oauth-client-cloudflare-workers";
 
-const host = "https://snowpost.ndim.workers.dev";
+const host = "https://snowpo.st";
 
 const parseKey = (value: string) =>
 	JSON.parse(Buffer.from(value, "base64").toString("utf8"));

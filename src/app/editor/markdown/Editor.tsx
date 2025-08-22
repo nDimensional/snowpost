@@ -92,7 +92,8 @@ export function Editor({ initialValue, onChange }: EditorProps) {
 
 	return (
 		<div
-			className="editor text-sm border border-stone-200 focus-within:border-stone-300"
+			// className="editor text-sm border border-stone-200 focus-within:border-stone-300"
+			className="editor text-sm"
 			ref={element}
 		></div>
 	);
