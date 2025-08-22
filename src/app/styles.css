@@ -67,6 +67,11 @@ hr {
 
 a {
 	text-decoration: underline;
+	transition: color 0.2s ease;
+}
+
+a:hover {
+	color: var(--color-stone-700);
 }
 
 a.icon {
