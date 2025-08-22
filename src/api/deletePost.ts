@@ -5,7 +5,7 @@ import { toHtml } from "hast-util-to-html";
 import { ErrorResponse } from "rwsdk/worker";
 import { env } from "cloudflare:workers";
 
-import { deletePostContent, writePostContent } from "@/api/utils";
+import { deletePostContent } from "@/api/utils";
 
 export async function deletePost(
 	{ did, handle }: { did: string; handle: string | null },
