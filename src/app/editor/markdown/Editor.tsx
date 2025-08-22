@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { EditorState } from "@codemirror/state";
 import {
@@ -34,7 +34,7 @@ import { lintKeymap } from "@codemirror/lint";
 
 import { markdownLanguage } from "@codemirror/lang-markdown";
 
-import { useCodeMirror } from "./useCodeMirror.js";
+import { useCodeMirror } from "@/app/editor/markdown/useCodeMirror";
 
 const getExtensions = () => [
 	indentUnit.of("  "),

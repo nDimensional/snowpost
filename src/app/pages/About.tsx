@@ -2,9 +2,19 @@ import { RequestInfo } from "rwsdk/worker";
 
 import { Page } from "@/app/pages/Page";
 
+const blizzardHeader = `
+❅                       ❆                    ❅                          ❆                     ❅
+  ❆                   ❅                               ❆                   ❅                       ❆
+           ❅                     ❆                           ❅                     ❆
+   ❆                      ❅        ❆                   ❅                      ❆        ❅
+`.trim();
+
 export async function About({ ctx }: RequestInfo) {
 	return (
 		<Page session={ctx.session}>
+			<div className="whitespace-pre overflow-clip tracking-widest my-12">
+				{blizzardHeader}
+			</div>
 			<div className="content mt-16 mb-12 max-w-md">
 				<p>
 					Snowpost is built on <a href="https://atproto.com/">ATProto</a>, the

@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { EditorState } from "@codemirror/state";
 
-import { Editor } from "./Editor.js";
+import { Editor } from "@/app/editor/markdown/Editor";
 
 const defaultInitialValue = `
 # The start of something beautiful
@@ -58,19 +58,14 @@ export const App: React.FC<AppProps> = (props) => {
 		return () => window.removeEventListener("beforeunload", onBeforeUnload);
 	}, []);
 
-	const handlePost = useCallback(async () => {
+	const handleCreate = useCallback(async () => {
 		if (props.session === null || contentRef.current === null) {
 			return;
 		}
 
 		try {
-			const [method, url] =
-				props.tid === undefined
-					? ["POST", `/${props.session.did}`]
-					: ["PUT", `/${props.session.did}/${props.tid}`];
-
-			const res = await fetch(url, {
-				method: method,
+			const res = await fetch(`/${props.session.did}`, {
+				method: "POST",
 				body: contentRef.current.doc.toString(),
 				headers: { "content-type": "text/markdown" },
 			});
@@ -90,8 +85,60 @@ export const App: React.FC<AppProps> = (props) => {
 		}
 	}, []);
 
-	const handleDelete = useCallback(() => {
-		//
+	const handleUpdate = useCallback(async () => {
+		if (props.session === null || props.tid === undefined) {
+			return;
+		} else if (contentRef.current === null) {
+			return;
+		}
+
+		try {
+			const res = await fetch(`/${props.session.did}/${props.tid}`, {
+				method: "PUT",
+				body: contentRef.current.doc.toString(),
+				headers: { "content-type": "text/markdown" },
+			});
+
+			if (res.ok) {
+				localStorage.removeItem(localStorageKey(props.session, props.tid));
+				const location = res.headers.get("Location");
+				if (location !== null) {
+					window.location.href = location;
+				}
+			} else {
+				const msg = await res.text();
+				throw new Error(`${res.status} ${res.statusText}: ${msg}`);
+			}
+		} catch (err) {
+			alert(err);
+		}
+	}, []);
+
+	const handleDelete = useCallback(async () => {
+		if (props.session === null || props.tid === undefined) {
+			return;
+		} else if (contentRef.current === null) {
+			return;
+		}
+
+		try {
+			const res = await fetch(`/${props.session.did}/${props.tid}`, {
+				method: "DELETE",
+			});
+
+			if (res.ok) {
+				localStorage.removeItem(localStorageKey(props.session, props.tid));
+				const location = res.headers.get("Location");
+				if (location !== null) {
+					window.location.href = location;
+				}
+			} else {
+				const msg = await res.text();
+				throw new Error(`${res.status} ${res.statusText}: ${msg}`);
+			}
+		} catch (err) {
+			alert(err);
+		}
 	}, []);
 
 	return (
@@ -106,20 +153,24 @@ export const App: React.FC<AppProps> = (props) => {
 
 			<section className="flex flex-row justify-between">
 				<span>
-					{props.session !== null && props.tid !== undefined && (
+					{props.session !== null && props.tid !== undefined ? (
 						<button onClick={handleDelete} className="underline cursor-pointer">
 							delete
 						</button>
-					)}
+					) : null}
 				</span>
 				<span>
 					{props.session === null ? (
 						<span>
 							<a href="/login">sign in</a> to post
 						</span>
+					) : props.tid === undefined ? (
+						<button onClick={handleCreate} className="underline cursor-pointer">
+							post
+						</button>
 					) : (
-						<button onClick={handlePost} className="underline cursor-pointer">
-							{props.tid === undefined ? "post" : "save"}
+						<button onClick={handleUpdate} className="underline cursor-pointer">
+							save
 						</button>
 					)}
 				</span>

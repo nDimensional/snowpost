@@ -4,9 +4,9 @@ import { Page } from "@/app/pages/Page";
 
 const blizzardHeader = `
 ❆                          ❅                            ❅     ❆                          ❅
-          ❅         ❆                   ❅                               ❅         ❆                   ❅
+          ❅         ❆                   ❅                               ❅         ❆                   ❅   ❆
                           ❅                     ❆                                 ❅                     ❆
-    ❅                                      ❅        ❅             ❆
+    ❅                                      ❅        ❅             ❆                          ❅
 `.trim();
 
 export async function Home({ ctx }: RequestInfo) {

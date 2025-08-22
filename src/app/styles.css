@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+	--page-frame: 32px;
+}
+
 html {
 	background-color: var(--color-stone-100);
 	font-family: "PT Serif", Garamond, serif;
@@ -8,14 +12,17 @@ html {
 }
 
 body {
+	margin: auto;
+	max-width: 1024px;
 	min-height: 100svh;
 	-webkit-text-size-adjust: 100%;
+
+	padding: 0 var(--page-frame);
 }
 
 #root {
-	padding-top: 32px;
-	padding-bottom: 32px;
-	max-width: 720px;
+	padding: var(--page-frame) 0;
+	max-width: 680px;
 	min-height: 100svh;
 }
 
@@ -33,9 +40,12 @@ body {
 	font-size: 16px;
 }
 
-@media (max-width: 752px) {
+@media (max-width: 704px) {
+	:root {
+		--page-frame: 0;
+	}
+
 	#root {
-		padding: 0;
 		max-width: none;
 		min-width: 320px;
 	}
