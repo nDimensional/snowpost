@@ -1,7 +1,5 @@
 import { RequestInfo } from "rwsdk/worker";
 
-import { Page } from "@/app/pages/Page";
-
 const blizzardHeader = `
 ❅                       ❆                    ❅                          ❆                     ❅
   ❆                   ❅                               ❆                   ❅                       ❆
@@ -9,9 +7,9 @@ const blizzardHeader = `
    ❆                      ❅        ❆                   ❅                      ❆        ❅
 `.trim();
 
-export async function About({ ctx }: RequestInfo) {
+export async function About({}: RequestInfo) {
 	return (
-		<Page session={ctx.session}>
+		<>
 			<div className="whitespace-pre overflow-clip tracking-widest my-12">
 				{blizzardHeader}
 			</div>
@@ -29,6 +27,6 @@ export async function About({ ctx }: RequestInfo) {
 					tools, not just the Snowpost website.
 				</p>
 			</div>
-		</Page>
+		</>
 	);
 }

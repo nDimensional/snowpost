@@ -8,8 +8,7 @@ import { Document } from "@/app/Document";
 import { Home } from "@/app/pages/Home";
 import { Login } from "@/app/pages/Login";
 import { Write } from "@/app/pages/Write";
-import { Recent } from "@/app/pages/Recent";
-import { Profile } from "@/app/pages/Profile";
+import { UserProfile } from "@/app/pages/[user]";
 import { ViewPost } from "@/app/pages/ViewPost";
 import { EditPost } from "@/app/pages/EditPost";
 import { client } from "@/app/oauth/oauth-client";
@@ -172,8 +171,7 @@ export default defineApp([
 			route("/about", About),
 			route("/login", Login),
 			route("/write", Write),
-			route("/recent", Recent),
-			route("/:user", Profile),
+			route("/:user", UserProfile),
 			route("/:user/:slug", ViewPost),
 			route("/:user/:slug/edit", EditPost),
 		],

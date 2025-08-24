@@ -1,7 +1,5 @@
 import { RequestInfo } from "rwsdk/worker";
 
-import { Page } from "@/app/pages/Page";
-
 const blizzardHeader = `
 ❆                          ❅                            ❅     ❆                          ❅
           ❅         ❆                   ❅                               ❅         ❆                   ❅   ❆
@@ -9,9 +7,9 @@ const blizzardHeader = `
     ❅                                      ❅        ❅             ❆                          ❅
 `.trim();
 
-export async function Home({ ctx }: RequestInfo) {
+export async function Home({}: RequestInfo) {
 	return (
-		<Page session={ctx.session}>
+		<>
 			<div className="whitespace-pre overflow-clip tracking-widest my-12">
 				{blizzardHeader}
 			</div>
@@ -30,6 +28,6 @@ export async function Home({ ctx }: RequestInfo) {
 					<a href="/write">writing a new post</a>.
 				</p>
 			</div>
-		</Page>
+		</>
 	);
 }

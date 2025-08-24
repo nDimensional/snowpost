@@ -7,7 +7,6 @@ import { CID } from "multiformats/cid";
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 import type { OAuthSession } from "atproto-oauth-client-cloudflare-workers/oauth-client";
 
-import { Page } from "@/app/pages/Page";
 import { App } from "@/app/editor/markdown/App";
 import { client } from "@/app/oauth/oauth-client";
 import { tidPattern } from "@/app/shared/utils";
@@ -89,9 +88,5 @@ export async function EditPost({
 		throw new ErrorResponse(500, `Failed to fetch record content: ${err}`);
 	}
 
-	return (
-		<Page session={ctx.session}>
-			<App session={ctx.session} tid={slug} initialValue={initialValue} />
-		</Page>
-	);
+	return <App session={ctx.session} tid={slug} initialValue={initialValue} />;
 }

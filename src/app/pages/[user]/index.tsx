@@ -3,10 +3,9 @@ import { env } from "cloudflare:workers";
 
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 
-import { Page } from "@/app/pages/Page";
 import { client } from "@/app/oauth/oauth-client";
 import { createPost } from "@/api/createPost";
-import { parseTID } from "../shared/utils";
+import { parseTID } from "@/app/shared/utils";
 
 async function getPostList(
 	identity: IdentityInfo,
@@ -28,17 +27,17 @@ async function getPostList(
 	}));
 }
 
-export async function Profile({
+export async function UserProfile({
 	ctx,
-	params: { user },
+	params,
 	request,
 }: RequestInfo<{ user: string }>) {
 	let identity: IdentityInfo;
 	try {
-		identity = await client.identityResolver.resolve(user);
+		identity = await client.identityResolver.resolve(params.user);
 	} catch (err) {
 		console.error(err);
-		throw new ErrorResponse(404, `Failed to resolve user ${user}`);
+		throw new ErrorResponse(404, `Failed to resolve user ${params.user}`);
 	}
 
 	if (request.method === "POST") {
@@ -58,13 +57,13 @@ export async function Profile({
 	const handle =
 		identity.handle === "handle.invalid" ? identity.did : identity.handle;
 
-	const profileURL = `https://bsky.app/profile/${user}`;
+	const profileURL = `https://bsky.app/profile/${params.user}`;
 
 	return (
-		<Page session={ctx.session}>
+		<>
 			<div className="mt-16 mb-12">
 				<div className="my-8">
-					<a href={profileURL}>{user}</a>
+					<a href={profileURL}>{params.user}</a>
 				</div>
 				<ul className="flex flex-col">
 					{postList.map(({ slug, previewText, createdAt }) => (
@@ -82,6 +81,6 @@ export async function Profile({
 					))}
 				</ul>
 			</div>
-		</Page>
+		</>
 	);
 }

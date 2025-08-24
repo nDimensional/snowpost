@@ -17,18 +17,25 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>
-			{children}
-			{/*<div id="root" className="py-8 mx-auto flex flex-col">
-				<Header
-					title={
+			<div id="root" className="flex flex-col">
+				<header className="py-3 bg-stone-300 flex flex-row justify-between items-center">
+					<span className="inline-flex gap-2">
 						<a href="/" className="icon">
-							❅
+							<img src="/icon-96x96.png" width={24} height={24} />
 						</a>
-					}
-				/>
+					</span>
+					<span className="inline-flex gap-2">
+						<a href="/write">write</a>
+						<span className="text-stone-400">∣</span>
+						<a href="/recent">recent</a>
+						<span className="text-stone-400">∣</span>
+						<a href="/about">about</a>
+						<span className="text-stone-400">∣</span>
+						<a href="/profile">profile</a>
+					</span>
+				</header>
 				<main className="flex-1">{children}</main>
-				<footer className="min-h-8 border-t-4 border-stone-300 mx-6"></footer>
-			</div>*/}
+			</div>
 		</body>
 	</html>
 );

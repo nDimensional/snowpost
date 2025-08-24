@@ -3,7 +3,6 @@ import { env } from "cloudflare:workers";
 
 import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
 
-import { Page } from "@/app/pages/Page";
 import { client } from "@/app/oauth/oauth-client";
 import { parseTID, tidPattern } from "@/app/shared/utils";
 import { updatePost } from "@/api/updatePost";
@@ -26,7 +25,6 @@ export async function ViewPost({
 	ctx,
 	params: { user, slug },
 	request,
-	response,
 }: RequestInfo<{ user: string; slug: string }>) {
 	if (!tidPattern.test(slug)) {
 		throw new ErrorResponse(404, "Not found");
@@ -71,7 +69,7 @@ export async function ViewPost({
 	const date = parseTID(slug);
 
 	return (
-		<Page session={ctx.session}>
+		<>
 			<nav className="flex flex-row py-2 justify-between">
 				<span className="flex flex-row gap-1">
 					<a href={`/${handle}`}>{handle}</a>
@@ -92,6 +90,6 @@ export async function ViewPost({
 				className="content my-12"
 				dangerouslySetInnerHTML={{ __html: content }}
 			/>
-		</Page>
+		</>
 	);
 }
