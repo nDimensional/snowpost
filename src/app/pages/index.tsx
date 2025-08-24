@@ -10,7 +10,7 @@ const blizzardHeader = `
 export async function Home({}: RequestInfo) {
 	return (
 		<>
-			<div className="whitespace-pre overflow-clip tracking-widest my-12">
+			<div className="whitespace-pre overflow-clip tracking-widest my-12 select-none">
 				{blizzardHeader}
 			</div>
 			<div className="content mt-16 mb-12 max-w-md">
@@ -23,8 +23,7 @@ export async function Home({}: RequestInfo) {
 					That's it!
 				</p>
 				<p>
-					Read more about Snowpost <a href="/about">here</a>, check out some{" "}
-					<a href="/recent">recent posts</a>, or get started{" "}
+					Read more about Snowpost <a href="/about">here</a>, or get started{" "}
 					<a href="/write">writing a new post</a>.
 				</p>
 			</div>

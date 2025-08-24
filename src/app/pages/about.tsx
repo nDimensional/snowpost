@@ -10,7 +10,7 @@ const blizzardHeader = `
 export async function About({}: RequestInfo) {
 	return (
 		<>
-			<div className="whitespace-pre overflow-clip tracking-widest my-12">
+			<div className="whitespace-pre overflow-clip tracking-widest my-12 select-none">
 				{blizzardHeader}
 			</div>
 			<div className="content mt-16 mb-12 max-w-md">
