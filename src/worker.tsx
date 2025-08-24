@@ -1,5 +1,10 @@
 import { defineApp, ErrorResponse } from "rwsdk/worker";
 import { render, route } from "rwsdk/router";
+import {
+	createSessionCookie,
+	generateSessionId,
+	isValidSessionId,
+} from "rwsdk/auth";
 
 import { env } from "cloudflare:workers";
 
@@ -13,14 +18,9 @@ import { Profile } from "@/app/pages/profile";
 import { UserProfile } from "@/app/pages/[user]";
 import { ViewPost } from "@/app/pages/[user]/[slug]";
 import { EditPost } from "@/app/pages/[user]/[slug]/edit";
-import { client } from "@/app/oauth/oauth-client";
 
+import { client } from "@/app/oauth/oauth-client";
 import { bareHandlePattern, handlePattern } from "@/app/shared/utils";
-import {
-	createSessionCookie,
-	generateSessionId,
-	isValidSessionId,
-} from "rwsdk/auth";
 
 export type AppContext = {
 	session: { did: string; handle: string | null } | null;
@@ -33,13 +33,13 @@ export default defineApp([
 
 	route("/oauth/client-metadata.json", () => {
 		return new Response(JSON.stringify(client.clientMetadata), {
-			headers: { "content-type": "application/json" },
+			headers: [["Content-Type", "application/json"]],
 		});
 	}),
 
 	route("/oauth/jwks.json", () => {
 		return new Response(JSON.stringify(client.jwks), {
-			headers: { "content-type": "application/json" },
+			headers: [["Content-Type", "application/json"]],
 		});
 	}),
 
@@ -48,6 +48,16 @@ export default defineApp([
 			const url = new URL(request.url);
 			const params = new URLSearchParams(url.search);
 			const { session, state } = await client.callback(params);
+
+			let location: string = "/profile";
+			if (state !== null) {
+				try {
+					const { redirect } = JSON.parse(state);
+					location = redirect ?? null;
+				} catch (err) {
+					console.error(`failed to parse oauth callback state: ${err}`);
+				}
+			}
 
 			// TODO: pass redirect path in state
 
@@ -60,20 +70,22 @@ export default defineApp([
 				JSON.stringify({ did: session.did }),
 			);
 
+			const sessionCookie = createSessionCookie({
+				name: cookieName,
+				sessionId,
+				maxAge: undefined,
+			});
+
 			return new Response(null, {
 				status: 302,
-				headers: {
-					Location: "/",
-					"Set-Cookie": createSessionCookie({
-						name: cookieName,
-						sessionId,
-						maxAge: undefined,
-					}),
-				},
+				headers: [
+					["Location", location],
+					["Set-Cookie", sessionCookie],
+				],
 			});
 		} catch (err) {
 			console.error(err);
-			return new Response(JSON.stringify(err), { status: 500 });
+			throw new ErrorResponse(500, JSON.stringify(err));
 		}
 	}),
 
@@ -91,22 +103,23 @@ export default defineApp([
 			throw new ErrorResponse(400, "invalid handle");
 		}
 
-		try {
-			// const state = "434321";
+		const redirect = params.get("redirect");
+		const state = JSON.stringify({ redirect });
 
+		try {
 			const url = await client.authorize(handle, {
 				signal: request.signal,
-				// state: null,
+				state: state,
 				ui_locales: "en",
 			});
 
 			return new Response(null, {
 				status: 302,
-				headers: { Location: url.href },
+				headers: [["Location", url.href]],
 			});
 		} catch (err) {
 			console.error(err);
-			return new Response(JSON.stringify(err), { status: 500 });
+			throw new ErrorResponse(500, JSON.stringify(err));
 		}
 	}),
 
@@ -156,12 +169,13 @@ export default defineApp([
 			await client.revoke(ctx.session.did);
 		}
 
+		const sessionCookie = `${cookieName}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 		return new Response(null, {
 			status: 302,
-			headers: {
-				Location: "/",
-				"Set-Cookie": `${cookieName}=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
-			},
+			headers: [
+				["Location", "/"],
+				["Set-Cookie", sessionCookie],
+			],
 		});
 	}),
 
