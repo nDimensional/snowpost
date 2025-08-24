@@ -5,12 +5,14 @@ import { env } from "cloudflare:workers";
 
 import { setCommonHeaders } from "@/app/headers";
 import { Document } from "@/app/Document";
-import { Home } from "@/app/pages/Home";
-import { Login } from "@/app/pages/Login";
-import { Write } from "@/app/pages/Write";
+import { Home } from "@/app/pages";
+import { About } from "./app/pages/about";
+import { Write } from "@/app/pages/write";
+import { Login } from "@/app/pages/login";
+import { Profile } from "@/app/pages/profile";
 import { UserProfile } from "@/app/pages/[user]";
-import { ViewPost } from "@/app/pages/ViewPost";
-import { EditPost } from "@/app/pages/EditPost";
+import { ViewPost } from "@/app/pages/[user]/[slug]";
+import { EditPost } from "@/app/pages/[user]/[slug]/edit";
 import { client } from "@/app/oauth/oauth-client";
 
 import { bareHandlePattern, handlePattern } from "@/app/shared/utils";
@@ -19,7 +21,6 @@ import {
 	generateSessionId,
 	isValidSessionId,
 } from "rwsdk/auth";
-import { About } from "./app/pages/About";
 
 export type AppContext = {
 	session: { did: string; handle: string | null } | null;
@@ -169,8 +170,9 @@ export default defineApp([
 		[
 			route("/", Home),
 			route("/about", About),
-			route("/login", Login),
 			route("/write", Write),
+			route("/login", Login),
+			route("/profile", Profile),
 			route("/:user", UserProfile),
 			route("/:user/:slug", ViewPost),
 			route("/:user/:slug/edit", EditPost),
