@@ -8,9 +8,21 @@ export function Profile({ ctx }: RequestInfo) {
 		});
 	}
 
+	const user = ctx.session.handle ?? ctx.session.did;
+	const profileURL = `https://bsky.app/profile/${user}`;
+
 	return (
-		<div className="content flex justify-center mt-16 mb-12">
-			<p>You are logged in as {ctx.session.handle ?? ctx.session.did}</p>
+		<div className="content flex justify-start mt-16 mb-12">
+			<p>
+				You are logged in as{" "}
+				<a target="_blank" href={profileURL}>
+					{user}
+				</a>
+				.
+			</p>
+			<p>
+				<a href="/logout">Log out</a>
+			</p>
 		</div>
 	);
 }

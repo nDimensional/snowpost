@@ -26,7 +26,7 @@ export function Login({ ctx }: RequestInfo) {
 				</label>
 				<input
 					type="submit"
-					value="Login"
+					value="Log in"
 					className="my-2 border border-stone-400 cursor-pointer"
 				/>
 			</form>
