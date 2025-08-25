@@ -12,7 +12,7 @@ export function Profile({ ctx }: RequestInfo) {
 	const profileURL = `https://bsky.app/profile/${user}`;
 
 	return (
-		<div className="content flex justify-start mt-16 mb-12">
+		<div className="content mt-16 mb-12">
 			<p>
 				You are logged in as{" "}
 				<a target="_blank" href={profileURL}>
