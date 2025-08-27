@@ -25,6 +25,7 @@ export async function ViewPost({
 	ctx,
 	params: { user, slug },
 	request,
+	response,
 }: RequestInfo<{ user: string; slug: string }>) {
 	if (!tidPattern.test(slug)) {
 		throw new ErrorResponse(404, "Not found");
@@ -57,13 +58,22 @@ export async function ViewPost({
 		throw new ErrorResponse(405, "Method Not Allowed");
 	}
 
+	const cacheTag = `/${identity.did}/${slug}`;
+	// const cache = await caches.open("post");
+	// const cachedResponse = await cache.match(cacheTag);
+	// if (cachedResponse !== undefined) {
+	// 	return cachedResponse;
+	// }
+
 	const content = await getPostContent(identity, slug);
 	if (content === null) {
 		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`);
 	}
 
-	// response.headers = new Headers({ ...response.headers });
-	// response.headers.set("Cache-Control", "public, max-age=7200");
+	response.headers = new Headers({ ...response.headers });
+	response.headers.set("Cache-Control", "public, max-age=86400");
+	response.headers.set("Cache-Tag", cacheTag);
+	// cache.put(cacheTag, response);
 
 	const handle = identity.handle ?? identity.did;
 	const date = parseTID(slug);
@@ -78,13 +88,6 @@ export async function ViewPost({
 						<span>{date.toLocaleDateString()}</span>
 					</span>
 				</span>
-				{ctx.session?.did === identity.did && (
-					<span className="inline-flex gap-2">
-						<span className="flex-1 inline-flex justify-end">
-							<a href={`/${user}/${slug}/edit`}>edit</a>
-						</span>
-					</span>
-				)}
 			</nav>
 			<div
 				className="content my-12"

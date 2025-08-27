@@ -179,6 +179,21 @@ export default defineApp([
 		});
 	}),
 
+	route("/profile", async ({ request, ctx, response }) => {
+		if (ctx.session === null) {
+			return new Response(null, {
+				status: 302,
+				headers: [["Location", "/login"]],
+			});
+		} else {
+			const user = ctx.session.handle ?? ctx.session.did;
+			return new Response(null, {
+				status: 302,
+				headers: [["Location", `/${user}`]],
+			});
+		}
+	}),
+
 	render(
 		Document,
 		[
@@ -186,7 +201,6 @@ export default defineApp([
 			route("/about", About),
 			route("/write", Write),
 			route("/login", Login),
-			route("/profile", Profile),
 			route("/:user", UserProfile),
 			route("/:user/:slug", ViewPost),
 			route("/:user/:slug/edit", EditPost),
