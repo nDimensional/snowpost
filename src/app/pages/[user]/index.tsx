@@ -77,7 +77,6 @@ export async function UserProfile({
 									<em>Untitled on {createdAt.toLocaleDateString()}</em>
 								)}
 							</a>
-							<a href={`/${handle}/${slug}/edit`}>edit</a>
 							{identity.did === ctx.session?.did && (
 								<a href={`/${handle}/${slug}/edit`}>edit</a>
 							)}
