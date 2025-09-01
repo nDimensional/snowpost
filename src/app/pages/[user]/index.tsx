@@ -65,21 +65,24 @@ export async function UserProfile({
 				<div className="my-8">
 					<a href={profileURL}>{params.user}</a>
 				</div>
-				<ul className="flex flex-col">
+				<ul className="flex flex-col gap-1">
 					{postList.map(({ slug, previewText, createdAt }) => (
 						<li key={slug} className="inline-flex items-start gap-2">
-							<span className="text-stone-400">{handle}</span>
-							<span className="text-stone-400">⟩</span>
-							<a className="flex-1" href={`/${handle}/${slug}`}>
-								{previewText ? (
-									<span>{previewText}</span>
-								) : (
-									<em>Untitled on {createdAt.toLocaleDateString()}</em>
+							<span className="text-stone-400">❅</span>
+							<span className="flex-1">
+								<a href={`/${handle}/${slug}`}>
+									{previewText ? (
+										<span>{previewText}</span>
+									) : (
+										<em>Untitled on {createdAt.toLocaleDateString()}</em>
+									)}
+								</a>
+							</span>
+							<span>
+								{identity.did === ctx.session?.did && (
+									<a href={`/${handle}/${slug}/edit`}>edit</a>
 								)}
-							</a>
-							{identity.did === ctx.session?.did && (
-								<a href={`/${handle}/${slug}/edit`}>edit</a>
-							)}
+							</span>
 						</li>
 					))}
 				</ul>
