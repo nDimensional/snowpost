@@ -14,7 +14,6 @@ import { Home } from "@/app/pages";
 import { About } from "./app/pages/about";
 import { Write } from "@/app/pages/write";
 import { Login } from "@/app/pages/login";
-import { Profile } from "@/app/pages/profile";
 import { UserProfile } from "@/app/pages/[user]";
 import { ViewPost } from "@/app/pages/[user]/[slug]";
 import { EditPost } from "@/app/pages/[user]/[slug]/edit";
