@@ -51,10 +51,12 @@ export default defineApp([
 			let location: string = "/profile";
 			if (state !== null) {
 				try {
-					const { redirect } = JSON.parse(state);
-					location = redirect ?? null;
+					const { redirect = null } = JSON.parse(state);
+					if (typeof redirect === "string" && redirect.startsWith("/")) {
+						location = redirect;
+					}
 				} catch (err) {
-					console.error(`failed to parse oauth callback state: ${err}`);
+					console.error(`failed to parse oauth callback state: ${err}`, state);
 				}
 			}
 
