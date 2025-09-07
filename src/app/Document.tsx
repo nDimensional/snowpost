@@ -32,7 +32,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 						<a href="/profile">profile</a>
 					</span>
 				</header>
-				<main className="flex-1">{children}</main>
+				<main className="flex-1 text-lg">{children}</main>
 			</div>
 		</body>
 	</html>

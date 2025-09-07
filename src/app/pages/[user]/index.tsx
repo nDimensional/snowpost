@@ -60,9 +60,9 @@ export async function UserProfile({
 	const profileURL = `https://bsky.app/profile/${params.user}`;
 
 	return (
-		<div className="text-lg">
+		<div>
 			<div className="my-12">
-				<h1 className="text-2xl my-2">{handle}</h1>
+				<h1 className="text-2xl my-3">{handle}</h1>
 				<div className="flex gap-2 items-center">
 					<a href={profileURL}>BlueSky profile</a>
 					{identity.did === ctx.session?.did && (
@@ -76,7 +76,7 @@ export async function UserProfile({
 				</div>
 			</div>
 			<hr />
-			<div className="my-4 text-lg">
+			<div className="my-4">
 				<ul className="flex flex-col gap-1">
 					{postList.map(({ slug, previewText, createdAt }) => (
 						<li key={slug} className="inline-flex items-start gap-2">

@@ -7,7 +7,6 @@
 html {
 	background-color: var(--color-stone-100);
 	font-family: "PT Serif", Garamond, serif;
-	/*font-size: 18px;*/
 }
 
 body {
@@ -26,7 +25,6 @@ body {
 }
 
 #root > header {
-	font-size: 16px;
 	padding-left: 16px;
 	padding-right: 16px;
 }
@@ -50,7 +48,6 @@ body {
 	}
 
 	#root > header {
-		font-size: 16px;
 		padding-left: 12px;
 		padding-right: 12px;
 	}
