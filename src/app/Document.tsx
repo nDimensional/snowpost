@@ -18,7 +18,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 		</head>
 		<body>
 			<div id="root" className="flex flex-col">
-				<header className="py-3 bg-stone-300 flex flex-row justify-between items-center">
+				<header className="py-3 bg-stone-300 flex flex-row justify-between">
 					<span className="inline-flex gap-2">
 						<a href="/" className="icon">
 							<img src="/icon-96x96.png" width={24} height={24} />

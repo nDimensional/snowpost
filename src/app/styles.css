@@ -7,8 +7,7 @@
 html {
 	background-color: var(--color-stone-100);
 	font-family: "PT Serif", Garamond, serif;
-	font-size: 18px;
-	/*line-height: 1;*/
+	/*font-size: 18px;*/
 }
 
 body {
@@ -90,22 +89,6 @@ a.icon {
 .editor .cm-content {
 	min-height: 320px;
 }
-
-.grid-table {
-	display: grid;
-	grid-template-columns: max-content max-content max-content;
-	gap: 0.25em;
-}
-
-/*.editor {
-	padding: 0 16px;
-	outline: none;
-
-	min-height: 320px;
-	:focus {
-		outline: none;
-	}
-}*/
 
 .editor,
 .content {

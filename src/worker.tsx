@@ -48,6 +48,8 @@ export default defineApp([
 			const params = new URLSearchParams(url.search);
 			const { session, state } = await client.callback(params);
 
+			console.log(`got callback state: ${JSON.stringify(state)}`);
+
 			let location: string = "/profile";
 			if (state !== null) {
 				try {
@@ -106,6 +108,8 @@ export default defineApp([
 
 		const redirect = params.get("redirect");
 		const state = JSON.stringify({ redirect });
+
+		console.log(`created oauth state: ${state}`);
 
 		try {
 			const url = await client.authorize(handle, {

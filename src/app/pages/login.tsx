@@ -9,7 +9,7 @@ export function Login({ ctx }: RequestInfo) {
 	}
 
 	return (
-		<div className="content flex justify-center mt-16 mb-12">
+		<div className="flex justify-center mt-16 mb-12 text-lg">
 			<form
 				className="flex flex-col align-end"
 				method="get"
