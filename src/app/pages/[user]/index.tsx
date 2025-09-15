@@ -63,7 +63,7 @@ export async function UserProfile({
 		<div>
 			<div className="my-12">
 				<h1 className="text-2xl my-3">{handle}</h1>
-				<div className="flex gap-2 items-center">
+				<div className="flex gap-2 items-center text-base">
 					<a href={profileURL}>BlueSky profile</a>
 					{identity.did === ctx.session?.did && (
 						<>
