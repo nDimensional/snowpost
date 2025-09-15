@@ -2,6 +2,7 @@
 
 :root {
 	--page-frame: 32px;
+	--blockquote-border-width: 4px;
 }
 
 html {
@@ -115,10 +116,10 @@ a.icon {
 	}
 
 	blockquote {
-		margin: 1em 0;
+		margin: 1em 0 1em calc(-1 * var(--blockquote-border-width));
 		contain: layout;
-		padding-left: 1em;
-		border-left: 4px solid var(--color-stone-400);
+		padding: 0 1em;
+		border-left: var(--blockquote-border-width) solid var(--color-stone-400);
 		background-color: var(--color-stone-200);
 		font-size: 18px;
 	}
