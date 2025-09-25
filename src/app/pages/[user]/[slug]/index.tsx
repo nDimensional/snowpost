@@ -57,7 +57,7 @@ async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string
 	}
 
 	{
-		const { content: mdContent } = await getPostContent(identity.did, slug)
+		const { content: mdContent } = await getPostContent(identity, slug)
 		const mdAST = fromMarkdown(mdContent, "utf-8")
 		const hast = toHast(mdAST, {})
 		const html = toHtml(hast, {})

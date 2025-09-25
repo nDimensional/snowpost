@@ -4,6 +4,7 @@ import { toString as mdastToString } from "mdast-util-to-string"
 import { ErrorResponse } from "rwsdk/worker"
 
 import type { OAuthSession } from "atproto-oauth-client-cloudflare-workers/oauth-client"
+import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver"
 
 import { Agent, BlobRef } from "@atproto/api"
 
@@ -19,14 +20,39 @@ type SnowpostPostRecord = {
 	updatedAt?: string
 }
 
+function getServiceEndpoint(identity: IdentityInfo): string | null {
+	const service = identity.didDoc.service?.find((service) => {
+		const serviceTypes = Array.isArray(service.type) ? service.type : [service.type]
+		return serviceTypes.includes("AtprotoPersonalDataServer") && service.id.endsWith("#atproto_pds")
+	})
+
+	if (service === undefined) {
+		return null
+	}
+
+	let endpoint = service.serviceEndpoint
+	if (Array.isArray(endpoint)) {
+		endpoint = endpoint[0] ?? {}
+	}
+
+	if (typeof endpoint === "string") {
+		return endpoint
+	}
+
+	const [value] = Object.values(endpoint)
+	return value ?? null
+}
+
 export async function getPostContent(
-	repo: string,
+	identity: IdentityInfo,
 	rkey: string,
 ): Promise<{ content: Uint8Array; createdAt: string; updatedAt?: string }> {
-	const agent = new Agent({ service: "https://bsky.social" })
+	const repo = identity.did
+
+	const service = getServiceEndpoint(identity)
+	const agent = new Agent({ service: service ?? "https://bsky.social" })
 	const getRecordResponse = await agent.com.atproto.repo.getRecord({ repo, collection, rkey })
 
-	console.log(getRecordResponse.success, getRecordResponse.data)
 	if (!getRecordResponse.success) {
 		throw new ErrorResponse(404, "Not Found")
 	}
