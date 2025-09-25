@@ -1,9 +1,7 @@
-import styles from "./styles.css?url";
-import fonts from "./fonts.css?url";
+import styles from "./styles.css?url"
+import fonts from "./fonts.css?url"
 
-export const Document: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => (
+export const Document: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 	<html lang="en">
 		<head>
 			<meta charSet="utf-8" />
@@ -27,6 +25,8 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 					<span className="inline-flex gap-2">
 						<a href="/write">write</a>
 						<span className="text-stone-400">∣</span>
+						<a href="/recent">recent</a>
+						<span className="text-stone-400">∣</span>
 						<a href="/about">about</a>
 						<span className="text-stone-400">∣</span>
 						<a href="/profile">profile</a>
@@ -36,4 +36,4 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({
 			</div>
 		</body>
 	</html>
-);
+)
