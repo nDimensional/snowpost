@@ -33,8 +33,7 @@ async function getRecentPosts(limit = 20): Promise<
 
 export async function Recent({}: RequestInfo) {
 	const postList = await getRecentPosts()
-	// {/*<div className="content mt-16 mb-12 max-w-md">
-	// </div>*/}
+
 	return (
 		<div className="flex flex-col gap-1 mt-16 mb-12 content">
 			{postList.map(({ did, handle, slug, previewText, createdAt }) => {

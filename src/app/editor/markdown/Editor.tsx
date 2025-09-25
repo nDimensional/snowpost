@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect } from "react"
 
-import { EditorState } from "@codemirror/state";
+import { EditorState } from "@codemirror/state"
 import {
 	crosshairCursor,
 	drawSelection,
@@ -12,9 +12,9 @@ import {
 	keymap,
 	lineNumbers,
 	rectangularSelection,
-} from "@codemirror/view";
-import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+} from "@codemirror/view"
+import { searchKeymap, highlightSelectionMatches } from "@codemirror/search"
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands"
 import {
 	bracketMatching,
 	defaultHighlightStyle,
@@ -23,18 +23,13 @@ import {
 	indentOnInput,
 	indentUnit,
 	syntaxHighlighting,
-} from "@codemirror/language";
-import {
-	autocompletion,
-	completionKeymap,
-	closeBrackets,
-	closeBracketsKeymap,
-} from "@codemirror/autocomplete";
-import { lintKeymap } from "@codemirror/lint";
+} from "@codemirror/language"
+import { autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
+import { lintKeymap } from "@codemirror/lint"
 
-import { markdownLanguage } from "@codemirror/lang-markdown";
+import { markdownLanguage } from "@codemirror/lang-markdown"
 
-import { useCodeMirror } from "@/app/editor/markdown/useCodeMirror";
+import { useCodeMirror } from "@/app/editor/markdown/useCodeMirror"
 
 const getExtensions = () => [
 	indentUnit.of("  "),
@@ -69,26 +64,26 @@ const getExtensions = () => [
 	markdownLanguage,
 	EditorView.lineWrapping,
 	keymap.of(defaultKeymap),
-];
+]
 
 interface EditorProps {
-	initialValue: string;
-	onChange?: (state: EditorState) => void;
+	initialValue: string
+	onChange?: (state: EditorState) => void
 }
 
 export function Editor({ initialValue, onChange }: EditorProps) {
 	const [state, transaction, _, element] = useCodeMirror<HTMLDivElement>({
 		doc: initialValue,
 		extensions: getExtensions(),
-	});
+	})
 
 	useEffect(() => {
 		if (onChange !== undefined && state !== null) {
 			if (transaction === null || transaction.docChanged) {
-				onChange(state);
+				onChange(state)
 			}
 		}
-	}, [state, transaction]);
+	}, [state, transaction])
 
 	return (
 		<div
@@ -96,5 +91,5 @@ export function Editor({ initialValue, onChange }: EditorProps) {
 			className="editor text-sm"
 			ref={element}
 		></div>
-	);
+	)
 }

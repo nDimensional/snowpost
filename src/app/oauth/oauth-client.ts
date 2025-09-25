@@ -1,6 +1,6 @@
-import { JoseKey } from "@atproto/jwk-jose";
+import { JoseKey } from "@atproto/jwk-jose"
 
-import { env } from "cloudflare:workers";
+import { env } from "cloudflare:workers"
 
 import {
 	WorkersOAuthClient,
@@ -8,12 +8,11 @@ import {
 	WorkersSavedSession,
 	DidCacheKV,
 	HandleCacheKV,
-} from "atproto-oauth-client-cloudflare-workers";
+} from "atproto-oauth-client-cloudflare-workers"
 
-const host = "https://snowpo.st";
+const host = "https://snowpo.st"
 
-const parseKey = (value: string) =>
-	JSON.parse(Buffer.from(value, "base64").toString("utf8"));
+const parseKey = (value: string) => JSON.parse(Buffer.from(value, "base64").toString("utf8"))
 
 export const client = new WorkersOAuthClient({
 	didCache: new DidCacheKV(env.DID_CACHE),
@@ -48,42 +47,42 @@ export const client = new WorkersOAuthClient({
 	// Interface to store authorization state data (during authorization flows)
 	stateStore: {
 		async set(key: string, internalState: WorkersSavedState): Promise<void> {
-			await env.OAUTH_STATE_STORE.put(key, JSON.stringify(internalState));
+			await env.OAUTH_STATE_STORE.put(key, JSON.stringify(internalState))
 		},
 		async get(key: string): Promise<WorkersSavedState | undefined> {
-			const value = await env.OAUTH_STATE_STORE.get(key);
+			const value = await env.OAUTH_STATE_STORE.get(key)
 			if (value === null) {
-				return undefined;
+				return undefined
 			} else {
-				return JSON.parse(value);
+				return JSON.parse(value)
 			}
 		},
 		async del(key: string): Promise<void> {
-			await env.OAUTH_STATE_STORE.delete(key);
+			await env.OAUTH_STATE_STORE.delete(key)
 		},
 	},
 
 	// Interface to store authenticated session data
 	sessionStore: {
 		async set(sub: string, session: WorkersSavedSession): Promise<void> {
-			await env.OAUTH_SESSION_STORE.put(sub, JSON.stringify(session));
+			await env.OAUTH_SESSION_STORE.put(sub, JSON.stringify(session))
 		},
 		async get(sub: string): Promise<WorkersSavedSession | undefined> {
-			const value = await env.OAUTH_SESSION_STORE.get(sub);
+			const value = await env.OAUTH_SESSION_STORE.get(sub)
 			if (value === null) {
-				return undefined;
+				return undefined
 			} else {
-				return JSON.parse(value);
+				return JSON.parse(value)
 			}
 		},
 		async del(sub: string): Promise<void> {
-			await env.OAUTH_SESSION_STORE.delete(sub);
+			await env.OAUTH_SESSION_STORE.delete(sub)
 		},
 	},
 
 	// // A lock to prevent concurrent access to the session store. Optional if only one instance is running.
 	// requestLock,
-});
+})
 
 // // Whenever needed, restore a user's session
 // async function worker() {

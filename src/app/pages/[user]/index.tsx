@@ -1,11 +1,11 @@
-import { ErrorResponse, RequestInfo } from "rwsdk/worker";
-import { env } from "cloudflare:workers";
+import { ErrorResponse, RequestInfo } from "rwsdk/worker"
+import { env } from "cloudflare:workers"
 
-import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver";
+import type { IdentityInfo } from "atproto-oauth-client-cloudflare-workers/identity-resolver"
 
-import { client } from "@/app/oauth/oauth-client";
-import { createPost } from "@/api/createPost";
-import { parseTID } from "@/app/shared/utils";
+import { client } from "@/app/oauth/oauth-client"
+import { createPost } from "@/api/createPost"
+import { parseTID } from "@/app/shared/utils"
 
 async function getPostList(
 	identity: IdentityInfo,
@@ -15,49 +15,44 @@ async function getPostList(
 	)
 		.bind(identity.did)
 		.all<{
-			slug: string;
-			created_at: string | null;
-			preview_text: string | null;
-		}>();
+			slug: string
+			created_at: string | null
+			preview_text: string | null
+		}>()
 
 	return result.results.map(({ slug, created_at, preview_text }) => ({
 		slug,
 		createdAt: created_at ? new Date(created_at) : parseTID(slug),
 		previewText: preview_text,
-	}));
+	}))
 }
 
-export async function UserProfile({
-	ctx,
-	params,
-	request,
-}: RequestInfo<{ user: string }>) {
-	let identity: IdentityInfo;
+export async function UserProfile({ ctx, params, request }: RequestInfo<{ user: string }>) {
+	let identity: IdentityInfo
 	try {
-		identity = await client.identityResolver.resolve(params.user);
+		identity = await client.identityResolver.resolve(params.user)
 	} catch (err) {
-		console.error(err);
-		throw new ErrorResponse(404, `Failed to resolve user ${params.user}`);
+		console.error(err)
+		throw new ErrorResponse(404, `Failed to resolve user ${params.user}`)
 	}
 
 	if (request.method === "POST") {
 		if (ctx.session === null) {
-			throw new ErrorResponse(401, "Unauthorized");
+			throw new ErrorResponse(401, "Unauthorized")
 		} else if (ctx.session.did !== identity.did) {
-			throw new ErrorResponse(403, "Forbidden");
+			throw new ErrorResponse(403, "Forbidden")
 		}
 
-		return await createPost(ctx.session, request);
+		return await createPost(ctx.session, request)
 	} else if (request.method !== "GET") {
-		throw new ErrorResponse(405, "Method Not Allowed");
+		throw new ErrorResponse(405, "Method Not Allowed")
 	}
 
-	const postList = await getPostList(identity);
+	const postList = await getPostList(identity)
 
-	const handle =
-		identity.handle === "handle.invalid" ? identity.did : identity.handle;
+	const handle = identity.handle === "handle.invalid" ? identity.did : identity.handle
 
-	const profileURL = `https://bsky.app/profile/${params.user}`;
+	const profileURL = `https://bsky.app/profile/${params.user}`
 
 	return (
 		<div>
@@ -83,22 +78,14 @@ export async function UserProfile({
 							<span className="text-stone-400 select-none">❅</span>
 							<span className="flex-1">
 								<a href={`/${handle}/${slug}`}>
-									{previewText ? (
-										<span>{previewText}</span>
-									) : (
-										<em>Untitled on {createdAt.toLocaleDateString()}</em>
-									)}
+									{previewText ? <span>{previewText}</span> : <em>Untitled on {createdAt.toLocaleDateString()}</em>}
 								</a>
 							</span>
-							<span>
-								{identity.did === ctx.session?.did && (
-									<a href={`/${handle}/${slug}/edit`}>edit</a>
-								)}
-							</span>
+							<span>{identity.did === ctx.session?.did && <a href={`/${handle}/${slug}/edit`}>edit</a>}</span>
 						</li>
 					))}
 				</ul>
 			</div>
 		</div>
-	);
+	)
 }
