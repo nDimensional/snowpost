@@ -55,8 +55,8 @@ export async function UserProfile({ ctx, params, request }: RequestInfo<{ user: 
 	const profileURL = `https://bsky.app/profile/${params.user}`
 
 	return (
-		<div>
-			<div className="my-12">
+		<>
+			<div className="mt-12 mb-8">
 				<h1 className="text-2xl my-3">{handle}</h1>
 				<div className="flex gap-2 items-center text-base">
 					<a href={profileURL}>BlueSky profile</a>
@@ -86,6 +86,6 @@ export async function UserProfile({ ctx, params, request }: RequestInfo<{ user: 
 					))}
 				</ul>
 			</div>
-		</div>
+		</>
 	)
 }
