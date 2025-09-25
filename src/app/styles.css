@@ -153,5 +153,6 @@ a.icon {
 		font-size: 14px;
 		font-family: "IBM Plex Mono";
 		background-color: var(--color-stone-200);
+		overflow-x: scroll;
 	}
 }
