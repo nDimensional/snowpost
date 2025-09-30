@@ -1,7 +1,7 @@
+import assert from "node:assert"
 import { ErrorResponse, RequestInfo } from "rwsdk/worker"
 import { env } from "cloudflare:workers"
 
-import type mdast from "mdast"
 import { fromMarkdown } from "mdast-util-from-markdown"
 import { toHast } from "mdast-util-to-hast"
 import { toHtml } from "hast-util-to-html"
@@ -12,7 +12,8 @@ import { client } from "@/app/oauth/oauth-client"
 import { parseTID, tidPattern } from "@/app/shared/utils"
 import { updatePost } from "@/api/updatePost"
 import { deletePost } from "@/api/deletePost"
-import { getPostContent } from "@/api/utils"
+import { extractPreviewText, getPostContent } from "@/api/utils"
+import { mdastToHTML } from "@/app/shared/render"
 
 async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string | null> {
 	// {
@@ -39,8 +40,7 @@ async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string
 		if (object !== null) {
 			const mdContent = await object.bytes()
 			const mdAST = fromMarkdown(mdContent, "utf-8")
-			const hast = toHast(mdAST, {})
-			const html = toHtml(hast, {})
+			const html = mdastToHTML(mdAST)
 
 			await Promise.all([
 				env.R2.put(`${identity.did}/${slug}/content.json`, JSON.stringify(mdAST), {
@@ -59,8 +59,9 @@ async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string
 	{
 		const { content: mdContent } = await getPostContent(identity, slug)
 		const mdAST = fromMarkdown(mdContent, "utf-8")
-		const hast = toHast(mdAST, {})
-		const html = toHtml(hast, {})
+		const html = mdastToHTML(mdAST)
+
+		const previewText = extractPreviewText(mdAST)
 
 		await Promise.all([
 			env.R2.put(`${identity.did}/${slug}/content.md`, mdContent, {
@@ -75,6 +76,18 @@ async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string
 				httpMetadata: { contentType: "application/xhtml+xml" },
 			}),
 		])
+
+		try {
+			const handle = identity.handle === "handle.invalid" ? null : identity.handle
+			const createdAt = parseTID(slug).toISOString()
+
+			const stmt = env.DB.prepare(
+				"INSERT INTO POSTS (did, handle, slug, created_at, preview_text) VALUES (?, ?, ?, ?, ?)",
+			).bind(identity.did, handle, slug, createdAt, previewText)
+			await stmt.run()
+		} catch (err) {
+			throw new ErrorResponse(500, `Failed to publish post: ${err}`)
+		}
 
 		return html
 	}

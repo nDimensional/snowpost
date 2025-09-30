@@ -1,12 +1,11 @@
 import { fromMarkdown } from "mdast-util-from-markdown"
-import { toHast } from "mdast-util-to-hast"
-import { toHtml } from "hast-util-to-html"
 
 import { ErrorResponse } from "rwsdk/worker"
 import { env } from "cloudflare:workers"
 
 import { parseTID } from "@/app/shared/utils"
 import { writePostContent, extractPreviewText } from "@/api/utils"
+import { mdastToHTML } from "@/app/shared/render"
 
 export async function updatePost(
 	{ did, handle }: { did: string; handle: string | null },
@@ -19,10 +18,9 @@ export async function updatePost(
 	}
 
 	const mdContent = await request.bytes()
-	const mdast = fromMarkdown(mdContent, "utf-8")
-	const hast = toHast(mdast, {})
-	const html = toHtml(hast, {})
-	const previewText = extractPreviewText(mdast)
+	const mdAST = fromMarkdown(mdContent, "utf-8")
+	const html = mdastToHTML(mdAST)
+	const previewText = extractPreviewText(mdAST)
 
 	const updatedAt = new Date().toISOString()
 	const createdAt = parseTID(slug).toISOString()
@@ -38,7 +36,7 @@ export async function updatePost(
 			httpMetadata: { contentType: "text/markdown" },
 		}),
 
-		env.R2.put(`${did}/${slug}/content.json`, JSON.stringify(mdast), {
+		env.R2.put(`${did}/${slug}/content.json`, JSON.stringify(mdAST), {
 			httpMetadata: { contentType: "application/json" },
 		}),
 

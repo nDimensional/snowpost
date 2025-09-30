@@ -1,4 +1,5 @@
 import styles from "./styles.css?url"
+import highlight from "./highlight.css?url"
 import fonts from "./fonts.css?url"
 
 export const Document: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -12,6 +13,7 @@ export const Document: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 			<link rel="stylesheet" href={styles} />
 			<link rel="stylesheet" href={fonts} />
+			<link rel="stylesheet" href={highlight} />
 			<script type="module" src="/src/client.tsx"></script>
 		</head>
 		<body>
