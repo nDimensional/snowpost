@@ -12,8 +12,6 @@ import {
 
 const host = "https://snowpo.st"
 
-const parseKey = (value: string) => JSON.parse(Buffer.from(value, "base64").toString("utf8"))
-
 export const client = new WorkersOAuthClient({
 	didCache: new DidCacheKV(env.DID_CACHE),
 	handleCache: new HandleCacheKV(env.HANDLE_CACHE, {}),
@@ -39,9 +37,9 @@ export const client = new WorkersOAuthClient({
 	// Used to authenticate the client to the token endpoint. Will be used to
 	// build the jwks object to be exposed on the "jwks_uri" endpoint.
 	keyset: await Promise.all([
-		JoseKey.fromImportable({ ...parseKey(env.PRIVATE_KEY_1), kid: "key1" }, "key1"),
-		// JoseKey.fromImportable(parseKey(env.PRIVATE_KEY_2), "key2"),
-		// JoseKey.fromImportable(parseKey(env.PRIVATE_KEY_3), "key3"),
+		JoseKey.fromImportable(JSON.parse(env.PRIVATE_KEY_1)),
+		JoseKey.fromImportable(JSON.parse(env.PRIVATE_KEY_2)),
+		// JoseKey.fromImportable(JSON.parse(env.PRIVATE_KEY_3)),
 	]),
 
 	// Interface to store authorization state data (during authorization flows)
