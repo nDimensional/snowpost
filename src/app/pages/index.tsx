@@ -16,7 +16,7 @@ export async function Home({}: RequestInfo) {
 				<p>Snowpost is a simple, minimalist writing platform.</p>
 
 				<p>
-					You can log in with your <a href="https://bsky.app/">BlueSky</a> account and publish beautiful static pages to
+					You can log in with your <a href="https://bsky.app/">Bluesky</a> account and publish beautiful static pages to
 					share with the world. That's it!
 				</p>
 				<p>
