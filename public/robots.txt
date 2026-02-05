@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /write
+Disallow: /recent
