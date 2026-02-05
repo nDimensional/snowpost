@@ -17,7 +17,7 @@
 					},
 					"previewText": {
 						"type": "string",
-						"format": "datetime",
+						"maxLength": 300,
 						"description": "Display title"
 					},
 					"createdAt": {
