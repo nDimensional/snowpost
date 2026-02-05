@@ -21,7 +21,7 @@ export async function Home({}: RequestInfo) {
 				</p>
 				<p>
 					Read more about Snowpost <a href="/about">here</a>, read{" "}
-					<a href="/syntacrobat.xyz/3lyvef4lhos">an example post</a>, or get started{" "}
+					<a href="/syntacrobat.xyz/3lwyhoxv2g7">an example post</a>, or get started{" "}
 					<a href="/write">writing a new post</a>.
 				</p>
 			</div>
