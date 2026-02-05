@@ -1,4 +1,3 @@
-import assert from "node:assert"
 import { ErrorResponse, RequestInfo } from "rwsdk/worker"
 import { env } from "cloudflare:workers"
 

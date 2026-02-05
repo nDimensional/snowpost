@@ -138,8 +138,6 @@ export const App: React.FC<AppProps> = (props) => {
 				{initialValue && <Editor initialValue={initialValue} onChange={handleContentChange} />}
 			</section>
 
-			<hr className="my-2" />
-
 			<section className="flex flex-row justify-between">
 				<span>
 					{props.session !== null && props.tid !== undefined ? (

@@ -10,34 +10,29 @@ import {
 	highlightActiveLineGutter,
 	highlightSpecialChars,
 	keymap,
-	lineNumbers,
 	rectangularSelection,
 } from "@codemirror/view"
-import { searchKeymap, highlightSelectionMatches } from "@codemirror/search"
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands"
+import { highlightSelectionMatches } from "@codemirror/search"
+import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands"
 import {
 	bracketMatching,
 	defaultHighlightStyle,
-	foldGutter,
-	foldKeymap,
 	indentOnInput,
 	indentUnit,
 	syntaxHighlighting,
 } from "@codemirror/language"
-import { autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
-import { lintKeymap } from "@codemirror/lint"
+import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete"
 
-import { markdownLanguage } from "@codemirror/lang-markdown"
+import { markdown, commonmarkLanguage } from "@codemirror/lang-markdown"
 
 import { useCodeMirror } from "@/app/editor/markdown/useCodeMirror"
+import { languages } from "@/app/shared/languages"
 
 const getExtensions = () => [
 	indentUnit.of("  "),
-	// lineNumbers(),
 	highlightActiveLineGutter(),
 	highlightSpecialChars(),
 	history(),
-	// foldGutter(),
 	drawSelection(),
 	dropCursor(),
 	EditorState.allowMultipleSelections.of(true),
@@ -46,24 +41,25 @@ const getExtensions = () => [
 	syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
 	bracketMatching(),
 	closeBrackets(),
-	autocompletion(),
 	rectangularSelection(),
 	crosshairCursor(),
 	highlightActiveLine(),
 	highlightSelectionMatches(),
 	keymap.of([
-		...closeBracketsKeymap,
 		...defaultKeymap,
-		...searchKeymap,
 		...historyKeymap,
-		...foldKeymap,
-		...completionKeymap,
-		...lintKeymap,
+		...closeBracketsKeymap,
+		indentWithTab,
+		{ key: "Mod-s", preventDefault: true, stopPropagation: true },
 	]),
 
-	markdownLanguage,
+	markdown({
+		base: commonmarkLanguage,
+		addKeymap: true,
+		codeLanguages: (desc: string) => languages[desc] ?? null,
+	}),
+
 	EditorView.lineWrapping,
-	keymap.of(defaultKeymap),
 ]
 
 interface EditorProps {
@@ -86,10 +82,6 @@ export function Editor({ initialValue, onChange }: EditorProps) {
 	}, [state, transaction])
 
 	return (
-		<div
-			// className="editor text-sm border border-stone-200 focus-within:border-stone-300"
-			className="editor text-sm"
-			ref={element}
-		></div>
+		<div className="editor text-sm bg-white border border-stone-200 focus-within:border-stone-300" ref={element}></div>
 	)
 }
