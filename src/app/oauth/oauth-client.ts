@@ -39,7 +39,7 @@ export const client = new WorkersOAuthClient({
 	// Used to authenticate the client to the token endpoint. Will be used to
 	// build the jwks object to be exposed on the "jwks_uri" endpoint.
 	keyset: await Promise.all([
-		JoseKey.fromImportable(parseKey(env.PRIVATE_KEY_1), "key1"),
+		JoseKey.fromImportable({ ...parseKey(env.PRIVATE_KEY_1), kid: "key1" }, "key1"),
 		// JoseKey.fromImportable(parseKey(env.PRIVATE_KEY_2), "key2"),
 		// JoseKey.fromImportable(parseKey(env.PRIVATE_KEY_3), "key3"),
 	]),
