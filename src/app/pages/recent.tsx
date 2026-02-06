@@ -3,15 +3,15 @@ import { env } from "cloudflare:workers"
 
 import { parseTID } from "@/app/shared/utils"
 
-async function getRecentPosts(limit = 20): Promise<
-	{
-		did: string
-		handle: string | null
-		slug: string
-		createdAt: Date
-		previewText: string | null
-	}[]
-> {
+type Post = {
+	did: string
+	handle: string | null
+	slug: string
+	createdAt: Date
+	previewText: string | null
+}
+
+async function getRecentPosts(limit = 20): Promise<Post[]> {
 	const sql = `
 		SELECT did, handle, slug, preview_text FROM posts ORDER BY slug DESC LIMIT ?
   `

@@ -63,13 +63,13 @@ const getExtensions = () => [
 ]
 
 interface EditorProps {
-	initialValue: string
+	initialValue?: string | null
 	onChange?: (state: EditorState) => void
 }
 
 export function Editor({ initialValue, onChange }: EditorProps) {
 	const [state, transaction, _, element] = useCodeMirror<HTMLDivElement>({
-		doc: initialValue,
+		doc: initialValue ?? "",
 		extensions: getExtensions(),
 	})
 
@@ -81,7 +81,6 @@ export function Editor({ initialValue, onChange }: EditorProps) {
 		}
 	}, [state, transaction])
 
-	return (
-		<div className="editor text-sm bg-white border border-stone-200 focus-within:border-stone-300" ref={element}></div>
-	)
+	return <div className="editor text-sm bg-white" ref={element}></div>
+	// return <div className="editor text-sm bg-white border border-stone-300" ref={element}></div>
 }

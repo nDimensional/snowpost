@@ -1,8 +1,10 @@
 "use client"
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { RefObject, useCallback, useEffect, useId, useRef, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 import { EditorState } from "@codemirror/state"
+import { fromMarkdown } from "mdast-util-from-markdown"
+import { mdastToHTML } from "@/app/shared/render"
 
 import { Editor } from "@/app/editor/markdown/Editor"
 
@@ -21,43 +23,20 @@ export interface AppProps {
 	initialValue?: string
 }
 
-export const App: React.FC<AppProps> = (props) => {
-	const contentRef = useRef<EditorState | null>(null)
-	const [initialValue, setInitialValue] = useState<string | null>(props.initialValue ?? null)
+interface FooterProps extends AppProps {
+	contentRef: RefObject<EditorState | null>
+}
 
-	useEffect(() => {
-		if (props.initialValue === undefined) {
-			const data = localStorage.getItem(localStorageKey(props.session, props.tid))
-			setInitialValue(data ?? defaultInitialValue + "\n\n")
-		}
-	}, [])
-
-	const save = useDebouncedCallback(() => {
-		if (typeof window !== "undefined" && contentRef.current !== null) {
-			localStorage.setItem(localStorageKey(props.session, props.tid), contentRef.current.doc.toString())
-		}
-	}, 1000)
-
-	const handleContentChange = useCallback((state: EditorState) => {
-		contentRef.current = state
-		save()
-	}, [])
-
-	useEffect(() => {
-		const onBeforeUnload = () => save.flush()
-		window.addEventListener("beforeunload", onBeforeUnload)
-		return () => window.removeEventListener("beforeunload", onBeforeUnload)
-	}, [])
-
+const Footer: React.FC<FooterProps> = (props) => {
 	const handleCreate = useCallback(async () => {
-		if (props.session === null || contentRef.current === null) {
+		if (props.session === null || props.contentRef.current === null) {
 			return
 		}
 
 		try {
 			const res = await fetch(`/${props.session.did}`, {
 				method: "POST",
-				body: contentRef.current.doc.toString(),
+				body: props.contentRef.current.doc.toString(),
 				headers: { "content-type": "text/markdown" },
 			})
 
@@ -79,14 +58,14 @@ export const App: React.FC<AppProps> = (props) => {
 	const handleUpdate = useCallback(async () => {
 		if (props.session === null || props.tid === undefined) {
 			return
-		} else if (contentRef.current === null) {
+		} else if (props.contentRef.current === null) {
 			return
 		}
 
 		try {
 			const res = await fetch(`/${props.session.did}/${props.tid}`, {
 				method: "PUT",
-				body: contentRef.current.doc.toString(),
+				body: props.contentRef.current.doc.toString(),
 				headers: { "content-type": "text/markdown" },
 			})
 
@@ -108,7 +87,7 @@ export const App: React.FC<AppProps> = (props) => {
 	const handleDelete = useCallback(async () => {
 		if (props.session === null || props.tid === undefined) {
 			return
-		} else if (contentRef.current === null) {
+		} else if (props.contentRef.current === null) {
 			return
 		}
 
@@ -133,35 +112,123 @@ export const App: React.FC<AppProps> = (props) => {
 	}, [])
 
 	return (
+		<section className="flex flex-row justify-between">
+			<span>
+				{props.session !== null && props.tid !== undefined ? (
+					<button onClick={handleDelete} className="underline cursor-pointer">
+						delete
+					</button>
+				) : null}
+			</span>
+			<span>
+				{props.session === null ? (
+					<span>
+						<a href="/login">sign in</a> to post
+					</span>
+				) : props.tid === undefined ? (
+					<button onClick={handleCreate} className="underline cursor-pointer">
+						post
+					</button>
+				) : (
+					<button onClick={handleUpdate} className="underline cursor-pointer">
+						save
+					</button>
+				)}
+			</span>
+		</section>
+	)
+}
+
+function getInitialValue(props: AppProps) {
+	const data = localStorage.getItem(localStorageKey(props.session, props.tid))
+	return data ?? defaultInitialValue + "\n\n"
+}
+
+export const App: React.FC<AppProps> = (props) => {
+	const contentRef = useRef<EditorState | null>(null)
+	const [initialValue, setInitialValue] = useState<string>(props.initialValue ?? getInitialValue(props))
+
+	const save = useDebouncedCallback(() => {
+		if (typeof window !== "undefined" && contentRef.current !== null) {
+			localStorage.setItem(localStorageKey(props.session, props.tid), contentRef.current.doc.toString())
+		}
+	}, 1000)
+
+	const handleContentChange = useCallback((state: EditorState) => {
+		contentRef.current = state
+		save()
+	}, [])
+
+	useEffect(() => {
+		const onBeforeUnload = () => save.flush()
+		window.addEventListener("beforeunload", onBeforeUnload)
+		return () => window.removeEventListener("beforeunload", onBeforeUnload)
+	}, [])
+
+	const editId = useId()
+	const previewId = useId()
+
+	const [previewHtml, setPreviewHtml] = useState<string | null>(null)
+
+	if (initialValue === null) {
+		return null
+	}
+
+	return (
 		<div className="my-8">
-			<section className="my-4 mx-auto max-w-3xl flex flex-col gap-2">
-				{initialValue && <Editor initialValue={initialValue} onChange={handleContentChange} />}
+			<section className="my-4 mx-auto max-w-3xl flex flex-col">
+				<div className="border-b border-stone-300">
+					<div className="inline-flex border border-b-0 border-stone-300 text-base">
+						<input
+							className="hidden peer/edit"
+							id={editId}
+							type="radio"
+							value="edit"
+							name="mode"
+							checked={previewHtml === null}
+							onChange={() => setPreviewHtml(null)}
+						/>
+						<label
+							className="py-0.5 px-2 cursor-pointer peer-checked/edit:bg-stone-200 text-stone-600 peer-checked/edit:text-black"
+							htmlFor={editId}
+						>
+							edit
+						</label>
+						<div className="border-l border-stone-300"></div>
+						<input
+							className="hidden peer/preview"
+							id={previewId}
+							type="radio"
+							value="preview"
+							name="mode"
+							checked={previewHtml !== null}
+							onChange={() => {
+								const content = contentRef.current?.doc?.toString() ?? ""
+								setInitialValue(content)
+								setPreviewHtml(mdastToHTML(fromMarkdown(content)))
+							}}
+						/>
+						<label
+							className="py-0.5 px-2 cursor-pointer peer-checked/preview:bg-stone-200 text-stone-600 peer-checked/preview:text-black"
+							htmlFor={previewId}
+						>
+							preview
+						</label>
+					</div>
+				</div>
+
+				{previewHtml === null ? (
+					<div className="border border-stone-300 border-t-0">
+						<Editor initialValue={initialValue} onChange={handleContentChange} />
+					</div>
+				) : (
+					<div className="border-b border-stone-300">
+						<div className="content" dangerouslySetInnerHTML={{ __html: previewHtml }}></div>
+					</div>
+				)}
 			</section>
 
-			<section className="flex flex-row justify-between">
-				<span>
-					{props.session !== null && props.tid !== undefined ? (
-						<button onClick={handleDelete} className="underline cursor-pointer">
-							delete
-						</button>
-					) : null}
-				</span>
-				<span>
-					{props.session === null ? (
-						<span>
-							<a href="/login">sign in</a> to post
-						</span>
-					) : props.tid === undefined ? (
-						<button onClick={handleCreate} className="underline cursor-pointer">
-							post
-						</button>
-					) : (
-						<button onClick={handleUpdate} className="underline cursor-pointer">
-							save
-						</button>
-					)}
-				</span>
-			</section>
+			<Footer {...props} contentRef={contentRef} />
 		</div>
 	)
 }

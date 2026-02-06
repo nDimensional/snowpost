@@ -1,5 +1,3 @@
-import assert from "node:assert"
-
 import type mdast from "mdast"
 import type hast from "hast"
 
@@ -8,6 +6,7 @@ import { toHtml } from "hast-util-to-html"
 import { fromLezer } from "hast-util-from-lezer"
 
 import { parsers } from "@/app/shared/languages"
+import { assert } from "@/app/shared/utils"
 
 export function mdastToHTML(mdAST: mdast.Root): string {
 	const hast = toHast(mdAST, {
