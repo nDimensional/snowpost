@@ -27,6 +27,31 @@ interface FooterProps extends AppProps {
 	contentRef: RefObject<EditorState | null>
 }
 
+const Button: React.FC<{
+	onClick: () => void | Promise<void>
+	children?: React.ReactNode
+}> = (props) => {
+	const [waiting, setWaiting] = useState(false)
+
+	const handleClick = useCallback(() => {
+		const result = props.onClick()
+		if (result !== undefined) {
+			setWaiting(true)
+			result.finally(() => setWaiting(false))
+		}
+	}, [props.onClick])
+
+	if (waiting) {
+		return <span className="animate-[spin_3s_linear_infinite]">❅</span>
+	} else {
+		return (
+			<button onClick={handleClick} className="underline cursor-pointer">
+				{props.children}
+			</button>
+		)
+	}
+}
+
 const Footer: React.FC<FooterProps> = (props) => {
 	const handleCreate = useCallback(async () => {
 		if (props.session === null || props.contentRef.current === null) {
@@ -114,11 +139,7 @@ const Footer: React.FC<FooterProps> = (props) => {
 	return (
 		<section className="flex flex-row justify-between">
 			<span>
-				{props.session !== null && props.tid !== undefined ? (
-					<button onClick={handleDelete} className="underline cursor-pointer">
-						delete
-					</button>
-				) : null}
+				{props.session !== null && props.tid !== undefined ? <Button onClick={handleDelete}>delete</Button> : null}
 			</span>
 			<span>
 				{props.session === null ? (
@@ -126,13 +147,9 @@ const Footer: React.FC<FooterProps> = (props) => {
 						<a href="/login">sign in</a> to post
 					</span>
 				) : props.tid === undefined ? (
-					<button onClick={handleCreate} className="underline cursor-pointer">
-						post
-					</button>
+					<Button onClick={handleCreate}>post</Button>
 				) : (
-					<button onClick={handleUpdate} className="underline cursor-pointer">
-						save
-					</button>
+					<Button onClick={handleUpdate}>save</Button>
 				)}
 			</span>
 		</section>
