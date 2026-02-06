@@ -28,17 +28,14 @@ interface FooterProps extends AppProps {
 }
 
 const Button: React.FC<{
-	onClick: () => void | Promise<void>
+	onClick: () => Promise<void>
 	children?: React.ReactNode
 }> = (props) => {
 	const [waiting, setWaiting] = useState(false)
 
 	const handleClick = useCallback(() => {
-		const result = props.onClick()
-		if (result !== undefined) {
-			setWaiting(true)
-			result.finally(() => setWaiting(false))
-		}
+		setWaiting(true)
+		props.onClick().finally(() => setWaiting(false))
 	}, [props.onClick])
 
 	if (waiting) {
