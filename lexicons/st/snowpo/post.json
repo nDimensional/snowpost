@@ -18,7 +18,7 @@
 					"previewText": {
 						"type": "string",
 						"maxLength": 300,
-						"description": "Display title"
+						"description": "Display title or preview text"
 					},
 					"createdAt": {
 						"type": "string",
@@ -29,6 +29,11 @@
 						"type": "string",
 						"format": "datetime",
 						"description": "Client-declared timestamp when this post was last updated."
+					},
+					"commentRoot": {
+						"type": "string",
+						"format": "at-uri",
+						"description": "A Bluesky post to use as the comment root"
 					}
 				}
 			}
