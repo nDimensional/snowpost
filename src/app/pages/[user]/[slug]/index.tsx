@@ -1,6 +1,7 @@
 import { ErrorResponse, RequestInfo } from "rwsdk/worker"
 import { env } from "cloudflare:workers"
 
+import mdast from "mdast"
 import { fromMarkdown } from "mdast-util-from-markdown"
 import { toHast } from "mdast-util-to-hast"
 import { toHtml } from "hast-util-to-html"
@@ -16,26 +17,50 @@ import { mdastToHTML } from "@/app/shared/render"
 
 async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string | null> {
 	{
-		const key = `${identity.did}/${slug}/content.md`
+		const key = `${identity.did}/${slug}/content.xhtml`
 		const object = await env.R2.get(key)
 		if (object !== null) {
-			const mdContent = await object.bytes()
-			const mdAST = fromMarkdown(mdContent, "utf-8")
-			const html = mdastToHTML(mdAST)
-
-			await Promise.all([
-				env.R2.put(`${identity.did}/${slug}/content.json`, JSON.stringify(mdAST), {
-					httpMetadata: { contentType: "application/json" },
-				}),
-
-				env.R2.put(`${identity.did}/${slug}/content.xhtml`, html, {
-					httpMetadata: { contentType: "application/xhtml+xml" },
-				}),
-			])
-
+			const html = await object.text()
 			return html
 		}
 	}
+
+	// {
+	// 	const key = `${identity.did}/${slug}/content.json`
+	// 	const object = await env.R2.get(key)
+	// 	if (object !== null) {
+	// 		const mdAST: mdast.Root = await object.json()
+	// 		const html = mdastToHTML(mdAST)
+
+	// 		await env.R2.put(`${identity.did}/${slug}/content.xhtml`, html, {
+	// 			httpMetadata: { contentType: "application/xhtml+xml" },
+	// 		})
+
+	// 		return html
+	// 	}
+	// }
+
+	// {
+	// 	const key = `${identity.did}/${slug}/content.md`
+	// 	const object = await env.R2.get(key)
+	// 	if (object !== null) {
+	// 		const mdContent = await object.bytes()
+	// 		const mdAST = fromMarkdown(mdContent, "utf-8")
+	// 		const html = mdastToHTML(mdAST)
+
+	// 		await Promise.all([
+	// 			env.R2.put(`${identity.did}/${slug}/content.json`, JSON.stringify(mdAST), {
+	// 				httpMetadata: { contentType: "application/json" },
+	// 			}),
+
+	// 			env.R2.put(`${identity.did}/${slug}/content.xhtml`, html, {
+	// 				httpMetadata: { contentType: "application/xhtml+xml" },
+	// 			}),
+	// 		])
+
+	// 		return html
+	// 	}
+	// }
 
 	{
 		const { content: mdContent } = await getPostContent(identity, slug)
@@ -139,9 +164,7 @@ export async function ViewPost({
 					<span className="flex flex-row gap-1">
 						<a href={`/${handle}`}>{handle}</a>
 						<span className="text-stone-400">‧</span>
-						<span className="flex-1">
-							<span>{date.toLocaleDateString()}</span>
-						</span>
+						<span>{date.toLocaleDateString()}</span>
 					</span>
 					<span className="flex flex-row gap-1">
 						{ctx.session !== null && ctx.session.did === identity.did ? (
