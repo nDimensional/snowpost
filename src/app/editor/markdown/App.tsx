@@ -118,6 +118,10 @@ const Footer: React.FC<FooterProps> = (props) => {
 			return
 		}
 
+		if (!confirm("Are you sure you want to permanently delete this post?")) {
+			return
+		}
+
 		try {
 			const res = await fetch(`/${props.session.did}/${props.tid}`, {
 				method: "DELETE",
