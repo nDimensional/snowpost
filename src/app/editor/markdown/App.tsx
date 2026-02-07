@@ -7,6 +7,7 @@ import { fromMarkdown } from "mdast-util-from-markdown"
 import { mdastToHTML } from "@/app/shared/render"
 
 import { Editor } from "@/app/editor/markdown/Editor"
+import { navigate } from "rwsdk/client"
 
 const defaultInitialValue = `
 # The start of something beautiful
@@ -39,7 +40,11 @@ const Button: React.FC<{
 	}, [props.onClick])
 
 	if (waiting) {
-		return <span className="animate-[spin_3s_linear_infinite]">❅</span>
+		return (
+			<span>
+				<img className="animate-[spin_5s_linear_infinite]" width="24" height="24" src="/icon-96x96.png" />
+			</span>
+		)
 	} else {
 		return (
 			<button onClick={handleClick} className="underline cursor-pointer">
@@ -66,7 +71,7 @@ const Footer: React.FC<FooterProps> = (props) => {
 				localStorage.removeItem(localStorageKey(props.session, props.tid))
 				const location = res.headers.get("Location")
 				if (location !== null) {
-					window.location.href = location
+					navigate(location)
 				}
 			} else {
 				const msg = await res.text()
