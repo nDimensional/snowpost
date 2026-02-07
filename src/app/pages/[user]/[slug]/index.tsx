@@ -15,24 +15,6 @@ import { extractPreviewText, getPostContent } from "@/api/utils"
 import { mdastToHTML } from "@/app/shared/render"
 
 async function getPostHTML(identity: IdentityInfo, slug: string): Promise<string | null> {
-	// {
-	// 	const key = `${identity.did}/${slug}/content.xhtml`;
-	// 	const object = await env.R2.get(key);
-	// 	if (object !== null) {
-	// 		return await object.text();
-	// 	}
-	// }
-
-	// {
-	// 	const key = `${identity.did}/${slug}/content.json`;
-	// 	const object = await env.R2.get(key);
-	// 	if (object !== null) {
-	// 		const mdAST = await object.json<mdast.Root>();
-	// 		const hast = toHast(mdAST, {});
-	// 		return toHtml(hast, {});
-	// 	}
-	// }
-
 	{
 		const key = `${identity.did}/${slug}/content.md`
 		const object = await env.R2.get(key)
@@ -127,42 +109,50 @@ export async function ViewPost({
 		}
 
 		return await deletePost(ctx.session, request, slug)
-	} else if (request.method !== "GET") {
+	} else if (request.method === "GET") {
+		const cacheTag = `/${identity.did}/${slug}`
+		// const cache = await caches.open("post");
+		// const cachedResponse = await cache.match(cacheTag);
+		// if (cachedResponse !== undefined) {
+		// 	return cachedResponse;
+		// }
+
+		const content = await getPostHTML(identity, slug)
+		if (content === null) {
+			throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`)
+		}
+
+		response.headers = new Headers({ ...response.headers })
+
+		if (ctx.session === null || ctx.session.did !== identity.did) {
+			response.headers.set("Cache-Control", "public, max-age=86400")
+			response.headers.set("Cache-Tag", cacheTag)
+			// cache.put(cacheTag, response);
+		}
+
+		const handle = identity.handle ?? identity.did
+		const date = parseTID(slug)
+
+		return (
+			<>
+				<nav className="flex flex-row py-2 justify-between">
+					<span className="flex flex-row gap-1">
+						<a href={`/${handle}`}>{handle}</a>
+						<span className="text-stone-400">‧</span>
+						<span className="flex-1">
+							<span>{date.toLocaleDateString()}</span>
+						</span>
+					</span>
+					<span className="flex flex-row gap-1">
+						{ctx.session !== null && ctx.session.did === identity.did ? (
+							<a href={`/${user}/${slug}/edit`}>edit</a>
+						) : null}
+					</span>
+				</nav>
+				<div className="content my-12" dangerouslySetInnerHTML={{ __html: content }} />
+			</>
+		)
+	} else {
 		throw new ErrorResponse(405, "Method Not Allowed")
 	}
-
-	const cacheTag = `/${identity.did}/${slug}`
-	// const cache = await caches.open("post");
-	// const cachedResponse = await cache.match(cacheTag);
-	// if (cachedResponse !== undefined) {
-	// 	return cachedResponse;
-	// }
-
-	const content = await getPostHTML(identity, slug)
-	if (content === null) {
-		throw new ErrorResponse(404, `Post ${user}/${slug} Not Found`)
-	}
-
-	response.headers = new Headers({ ...response.headers })
-	response.headers.set("Cache-Control", "public, max-age=86400")
-	response.headers.set("Cache-Tag", cacheTag)
-	// cache.put(cacheTag, response);
-
-	const handle = identity.handle ?? identity.did
-	const date = parseTID(slug)
-
-	return (
-		<>
-			<nav className="flex flex-row py-2 justify-between">
-				<span className="flex flex-row gap-1">
-					<a href={`/${handle}`}>{handle}</a>
-					<span className="text-stone-400">‧</span>
-					<span>
-						<span>{date.toLocaleDateString()}</span>
-					</span>
-				</span>
-			</nav>
-			<div className="content my-12" dangerouslySetInnerHTML={{ __html: content }} />
-		</>
-	)
 }

@@ -60,7 +60,6 @@ export default defineApp([
 			}
 
 			// TODO: pass redirect path in state
-
 			const sessionId = await generateSessionId({
 				secretKey: env.AUTH_SECRET_KEY,
 			})
@@ -178,17 +177,17 @@ export default defineApp([
 		})
 	}),
 
-	route("/profile", async ({ request, ctx, response }) => {
+	route("/profile", async ({ ctx }) => {
 		if (ctx.session === null) {
 			return new Response(null, {
 				status: 302,
 				headers: [["Location", "/login"]],
 			})
 		} else {
-			const user = ctx.session.handle ?? ctx.session.did
+			const handle = ctx.session.handle ?? ctx.session.did
 			return new Response(null, {
 				status: 302,
-				headers: [["Location", `/${user}`]],
+				headers: [["Location", `/${handle}`]],
 			})
 		}
 	}),

@@ -82,5 +82,4 @@ export function Editor({ initialValue, onChange }: EditorProps) {
 	}, [state, transaction])
 
 	return <div className="editor text-sm bg-white" ref={element}></div>
-	// return <div className="editor text-sm bg-white border border-stone-300" ref={element}></div>
 }
