@@ -19,7 +19,7 @@ const localStorageKey = (session: { did: string } | null, tid?: string) =>
 	session !== null && tid !== undefined ? `snowpost:content:update:${session.did}/${tid}` : "snowpost:content:create"
 
 export interface AppProps {
-	session: { did: string } | null
+	session: { did: string; handle: string | null } | null
 	tid?: string
 	initialValue?: string
 }
@@ -193,6 +193,8 @@ export const App: React.FC<AppProps> = (props) => {
 		return null
 	}
 
+	const handle = props.session?.handle ?? props.session?.did ?? null
+
 	return (
 		<div className="my-8">
 			<section className="my-4 mx-auto max-w-3xl flex flex-col">
@@ -242,7 +244,19 @@ export const App: React.FC<AppProps> = (props) => {
 					</div>
 				) : (
 					<div className="border-b border-stone-300">
-						<div className="content" dangerouslySetInnerHTML={{ __html: previewHtml }}></div>
+						{handle && (
+							<nav className="flex flex-row py-2 justify-between">
+								<span className="flex flex-row gap-1">
+									<a href={`/${handle}`}>{handle}</a>
+									<span className="text-stone-400">‧</span>
+									<span>
+										<span>{new Date().toLocaleDateString()}</span>
+									</span>
+								</span>
+							</nav>
+						)}
+
+						<div className="content my-12" dangerouslySetInnerHTML={{ __html: previewHtml }}></div>
 					</div>
 				)}
 			</section>
