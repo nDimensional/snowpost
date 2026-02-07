@@ -1,13 +1,13 @@
 "use client"
 
 import React, { RefObject, useCallback, useEffect, useId, useRef, useState } from "react"
-import { useDebouncedCallback } from "use-debounce"
-import { EditorState } from "@codemirror/state"
-import { fromMarkdown } from "mdast-util-from-markdown"
-import { mdastToHTML } from "@/app/shared/render"
-
-import { Editor } from "@/app/editor/markdown/Editor"
 import { navigate } from "rwsdk/client"
+import { useDebouncedCallback } from "use-debounce"
+import { fromMarkdown } from "mdast-util-from-markdown"
+import { EditorState } from "@codemirror/state"
+
+import { mdastToHTML } from "@/app/shared/render"
+import { Editor } from "@/app/editor/markdown/Editor"
 
 const defaultInitialValue = `
 # The start of something beautiful
