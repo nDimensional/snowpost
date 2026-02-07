@@ -59,7 +59,7 @@ export async function UserProfile({ ctx, params, request }: RequestInfo<{ user: 
 			<div className="mt-12 mb-8">
 				<h1 className="text-2xl my-3">{handle}</h1>
 				<div className="flex gap-2 items-center text-base">
-					<a href={profileURL}>BlueSky profile</a>
+					<a href={profileURL}>Bluesky profile</a>
 					{identity.did === ctx.session?.did && (
 						<>
 							<span className="text-stone-400">∣</span>
